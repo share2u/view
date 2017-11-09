@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                    http://www.springframework.org/schema/context
+                    http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                    http://www.springframework.org/schema/aop
+					http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+                    http://www.springframework.org/schema/tx
+                    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- 组件扫描器，指定的包下扫描注解 -->
+	<context:component-scan base-package="site.share2u.view" />
+	<!--加载属性文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- 配置数据源 -->
+	<bean id="dataSource0" class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver0}" />
+		<property name="url" value="${jdbc.url0}" />
+		<property name="username" value="${jdbc.username0}" />
+		<property name="password" value="${jdbc.password0}" />
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${jdbc.initialSize0}"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="${jdbc.maxActive0}"></property>
+		<!-- 连接池最大空闲  过时了-->
+		<!-- <property name="maxIdle" value="${jdbc.maxIdle0}"></property> -->
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${jdbc.minIdle0}"></property>
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${jdbc.maxWait0}"></property>
+	</bean>
+	<bean id="dataSource1" class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver1}" />
+		<property name="url" value="${jdbc.url1}" />
+		<property name="username" value="${jdbc.username1}" />
+		<property name="password" value="${jdbc.password1}" />
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${jdbc.initialSize1}"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="${jdbc.maxActive1}"></property>
+		<!-- 连接池最大空闲  过时了-->
+		<!-- <property name="maxIdle" value="${jdbc.maxIdle1}"></property> -->
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${jdbc.minIdle1}"></property>
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${jdbc.maxWait1}"></property>
+	</bean>
+
+	<bean id="dataSource" class="site.share2u.view.util.ThreadLocalRountingDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry value-ref="dataSource0" key="dataSource0" />
+				<entry value-ref="dataSource1" key="dataSource1" />
+			</map>
+		</property>
+		<!--配置默认数据源 -->
+		<property name="defaultTargetDataSource" ref="dataSource0"/>
+	</bean>
+	<!--配置aspectj的自动代理  -->
+	<aop:aspectj-autoproxy />
+	<!--切面  -->
+	<bean id="dataSourceInterceptor0" class="site.share2u.view.interceptor.DataSourceInterceptor0"/>
+	<bean id="dataSourceInterceptor1" class="site.share2u.view.interceptor.DataSourceInterceptor1"/>
+	
+	<!-- mybatis和spring整合 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath:mappers/*.xml"/>
+	</bean>
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="site.share2u.view.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	</bean>
+	<!-- 事务管理器实现类 ，可以有多个事务管理器，多个数据源 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 事务增强驱动 对@Transaction的具体业务类，方法上进行事务增强 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+</beans>

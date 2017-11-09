@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="site.share2u.view.dao.SchemaMapper">
+	<select id="getTables" resultType="Table">
+		select
+		table_name tableName
+		from
+		`TABLES` a
+		where
+		a.TABLE_SCHEMA="dw"
+	</select>
+	<select id="getColumns" parameterType="String" resultType="Column">
+		SELECT
+		table_name tableName,
+		column_name columnName,
+		data_type dataType
+		FROM
+		COLUMNS a
+		WHERE
+		table_schema = 'dw'
+		AND table_name = #{tableName,jdbcType=VARCHAR};
+	</select>
+</mapper>
