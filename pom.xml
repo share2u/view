@@ -256,7 +256,7 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.4.5.v20170502</version>
+				<version>9.3.11.v20160721</version>
 				<configuration>
 					<!--新代码扫描时间秒 -->
 					<scanIntervalSeconds>10</scanIntervalSeconds>

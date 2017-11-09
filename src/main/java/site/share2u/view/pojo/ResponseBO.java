@@ -15,7 +15,11 @@ public class ResponseBO {
 
 	    private Object Data = null;
 
-	    public int getCompleteCode () {
+	    
+	    public ResponseBO() {
+		}
+
+		public int getCompleteCode () {
 	        return completeCode;
 	    }
 

@@ -8,6 +8,10 @@ public class Table {
 	 */
 	private String TableName;
 
+	
+	public Table() {
+	}
+
 	public String getTableName() {
 		return TableName;
 	}

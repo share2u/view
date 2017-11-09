@@ -10,7 +10,7 @@
                     http://www.springframework.org/schema/mvc
                     http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"> 
      <!-- 自动扫描 @Controller 注册处理器 -->
-	<!-- <context:component-scan base-package="site.share2u.view.controller" />  -->
+	<context:component-scan base-package="site.share2u.view.controller" />
 	<!--避免IE执行AJAX时，返回JSON出现下载文件 -->
 	<bean id="mappingJacksonHttpMessageConverter"
 		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
@@ -45,6 +45,8 @@
 		<!-- 内存中的最大值 -->
 		<property name="maxInMemorySize" value="1048576" />
 	</bean>
+	<!--注解mvc的注解驱动，完成消息的转换  -->
+	<mvc:annotation-driven/>
 	<!--mvc:resource 配置静态资源的访问  -->
 	<mvc:resources location="/js/**" mapping="/js/"/>
 	<mvc:resources location="/css/**" mapping="/css/"/>
