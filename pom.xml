@@ -258,18 +258,15 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.3.11.v20160721</version>
 				<configuration>
-					<!--新代码扫描时间秒 -->
-					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<!--虚拟目录 -->
-					<webApp>
-						<contextPath>/</contextPath>
-					</webApp>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<!--端口号 -->
-							<port>8000</port>
-						</connector>
-					</connectors>
+					<httpConnector>
+						<port>80</port>
+					</httpConnector>
+					<stopKey>shutdown</stopKey>
+					<stopPort>9966</stopPort>
+					<scanIntervalSeconds>2</scanIntervalSeconds>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                    </webApp>
 				</configuration>
 			</plugin>
 			<!--Maven 编译插件 -->
@@ -300,7 +297,7 @@
 					<outxml>true</outxml>
 					<aspectLibraries>
 						<!-- 此处定义外部的aspect包，例如spring的事务aspect包 。这里引用的包必须在依赖中声明 -->
-						<!-- <aspectLibrary> <groupId>org.springframework</groupId> <artifactId>spring-aspects</artifactId> 
+						<!-- <aspectLibrary> <groupId>org.springframework</groupId> <artifactId>spring-aspects</artifactId>
 							</aspectLibrary> -->
 					</aspectLibraries>
 				</configuration>
