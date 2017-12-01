@@ -255,10 +255,8 @@
 			<!--jetty -->
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
-				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>8.0.0.M3</version>
-				<version>9.3.11.v20160721</version>
 				<configuration>
 					<stopPort>9967</stopPort>
 					<stopKey>foo</stopKey>
