@@ -7,7 +7,7 @@
 		from
 		`TABLES` a
 		where
-		a.TABLE_SCHEMA="dw"
+		a.TABLE_SCHEMA="db58_dj_product"
 	</select>
 	<select id="getColumns" parameterType="String" resultType="Column">
 		SELECT
@@ -17,7 +17,7 @@
 		FROM
 		COLUMNS a
 		WHERE
-		table_schema = 'dw'
+		table_schema = 'db58_dj_product'
 		AND table_name = #{tableName,jdbcType=VARCHAR};
 	</select>
 </mapper>

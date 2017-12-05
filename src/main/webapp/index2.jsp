@@ -96,6 +96,9 @@
             float: left;
             width: 75%;
         }
+        #selectTableID select{
+            width: 200px;
+        }
         .newViewID{
             float: left;
             margin-right: 30px;
@@ -110,11 +113,12 @@
         <div class="selectTitle">
             <div id="selectTableID">
                 <select name="number" id="number">
-                    <option>1</option>
-                    <option selected="selected">2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
+                    <option value="0">请选择数据源</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
                 </select>
             </div>
             <div class="newViewID">
@@ -146,9 +150,9 @@
 <script src="assets/js/jquery-2.1.4.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
 <script>
-    $( "#number" ).css('width', '200px')
-        .selectmenu({ position: { my : "left bottom", at: "left top" } })
-
+    $("#selectTableID select").change(function(){
+        console.log($(this).val());
+    })
 </script>
 
 </body>
