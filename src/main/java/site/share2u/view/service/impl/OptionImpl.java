@@ -1,16 +1,5 @@
 package site.share2u.view.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.axis.Axis;
@@ -24,12 +13,17 @@ import com.github.abel533.echarts.series.Bar;
 import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Scatter;
 import com.github.abel533.echarts.series.Series;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import site.share2u.view.dao.OptionMapper;
 import site.share2u.view.pojo.Column;
+import site.share2u.view.pojo.Dimension;
+import site.share2u.view.pojo.Measure;
 import site.share2u.view.pojo.PageData;
 import site.share2u.view.service.OptionService;
 import site.share2u.view.util.CEcharts;
+
+import java.util.*;
 
 @Service("optionService")
 public class OptionImpl implements OptionService {
@@ -39,8 +33,10 @@ public class OptionImpl implements OptionService {
 	private OptionMapper optionMapper;
 
 	@Override
-	public List<SeriesType> getTypes(List<Column> types, Map<String, Column> measures) {
+	public List<SeriesType> getTypes(List<Dimension> dimensions, List<Measure> measures) {
 		ArrayList<SeriesType> seriesTypes = new ArrayList<SeriesType>();
+		//TODO 判断推荐的类型--重点
+		/*
 		int size = types.size();
 		if(measures.size()>0){
 			switch (size) {
@@ -73,10 +69,14 @@ public class OptionImpl implements OptionService {
 				
 				break;
 			}
-		}
+		}*/
 		return seriesTypes;
 	}
 
+	@Override
+	public GsonOption getOption(String seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures){
+		return null;
+	}
 	@Override
 	public GsonOption getOption(String tableName, List<Column> dimension, Map<String, Column> measures,
 			SeriesType seriesType) {

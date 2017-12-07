@@ -1,10 +1,17 @@
 package site.share2u.view.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.github.abel533.echarts.code.SeriesType;
+import com.github.abel533.echarts.json.GsonOption;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;
 import site.share2u.view.pojo.ResponseBO;
+import site.share2u.view.service.OptionService;
 
 import java.util.List;
 
@@ -18,6 +25,8 @@ public class OptionController {
  * 3.保存option?
  */
 
+@Autowired
+private OptionService optionService;
 
     /*
      * 前后端传递大参数
@@ -27,8 +36,31 @@ public class OptionController {
     @RequestMapping(value = "/recommemd")
     public ResponseBO getTuiJianType(String tableName, List<Dimension> dimensions, List<Measure> measures) {
         ResponseBO rb = new ResponseBO();
+        //TODO 从数据库中读取一些信息--可以从做缓存
+        List<SeriesType> types = optionService.getTypes(dimensions, measures);
+        rb.setData(JSON.toJSON(types));
         return rb;
     }
 
+    /**
+    * @Description: 生成某个option
+    * @Author:   chenweimin
+    */
+    @RequestMapping(value="/option",method = RequestMethod.POST)
+    public ResponseBO createOption(String seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures){
+        ResponseBO rb = new ResponseBO();
+        GsonOption option = optionService.getOption(seriesType, tableName, dimensions, measures);
+        rb.setData(option);
+        return rb;
+    }
+
+    /**
+     * @Description: 获得某个option
+     */
+    @RequestMapping(value="/option/{id}",method = RequestMethod.GET)
+    public ResponseBO createOption(@PathVariable("id") String optionId){
+        ResponseBO rb = new ResponseBO();
+        return rb;
+    }
 
 }
