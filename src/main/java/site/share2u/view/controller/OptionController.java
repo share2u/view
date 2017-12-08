@@ -55,7 +55,7 @@ private OptionService optionService;
     }
 
     /**
-     * @Description: 获得某个option
+     * @Description: 获得某个option,要根据这个option可以还原到创建当时那个option的信息
      */
     @RequestMapping(value="/option/{id}",method = RequestMethod.GET)
     public ResponseBO createOption(@PathVariable("id") String optionId){

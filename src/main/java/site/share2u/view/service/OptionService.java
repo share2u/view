@@ -29,5 +29,5 @@ public interface OptionService {
 	* @Description: 改版的getOption
 	* @Author:   chenweimin
 	*/
-	public GsonOption getOption(String seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures);
+	public GsonOption getOption(String tableName, List<Dimension> dimensions, List<Measure> measures);
 }

@@ -22,6 +22,7 @@ import site.share2u.view.pojo.Measure;
 import site.share2u.view.pojo.PageData;
 import site.share2u.view.service.OptionService;
 import site.share2u.view.util.CEcharts;
+import site.share2u.view.util.MakeSql;
 
 import java.util.*;
 
@@ -74,7 +75,12 @@ public class OptionImpl implements OptionService {
 	}
 
 	@Override
-	public GsonOption getOption(String seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures){
+	public GsonOption getOption(String tableName, List<Dimension> dimensions, List<Measure> measures){
+		// 1.组装sql
+		String sql = MakeSql.getSql(tableName, dimensions, measures);
+		System.out.println(sql);
+		// 2.取得数据
+		List<PageData> data = getOptionData(sql);
 		return null;
 	}
 	@Override
