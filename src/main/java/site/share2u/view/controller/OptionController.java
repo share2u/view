@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;
 import site.share2u.view.pojo.ResponseBO;
+import site.share2u.view.service.Context;
+import site.share2u.view.service.OptionFactory;
 import site.share2u.view.service.OptionService;
 
 import java.util.List;
@@ -27,7 +29,8 @@ public class OptionController {
 
 @Autowired
 private OptionService optionService;
-
+@Autowired
+private List<OptionFactory> optionFactories;
     /*
      * 前后端传递大参数
      * 1，可以根据参数直接生成新的option2.已经形成的option要数据库参数加js路径
@@ -47,13 +50,28 @@ private OptionService optionService;
     * @Author:   chenweimin
     */
     @RequestMapping(value="/option",method = RequestMethod.POST)
-    public ResponseBO createOption(String seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures){
+    public ResponseBO createOption(SeriesType seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures){
         ResponseBO rb = new ResponseBO();
-        GsonOption option = optionService.getOption(seriesType, tableName, dimensions, measures);
+        Context context = new Context();//优化位置，类似springmvc单例多线程
+        context.setSeriesType(getOptionFactory(seriesType));
+        GsonOption option = context.generOption(tableName, dimensions, measures);
         rb.setData(option);
         return rb;
     }
 
+    /**
+     *  根据OPTION类型引入相应的option实现类
+     */
+    private OptionFactory getOptionFactory(SeriesType seriesType) {
+        OptionFactory optionFactory = null;
+        for (OptionFactory tmpFactory : optionFactories) {
+            if (tmpFactory.getSupportSeriesType().equals(seriesType)) {
+                optionFactory = tmpFactory;
+                break;
+            }
+        }
+        return optionFactory;
+    }
     /**
      * @Description: 获得某个option,要根据这个option可以还原到创建当时那个option的信息
      */

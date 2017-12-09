@@ -25,9 +25,4 @@ public interface OptionService {
 	 * @return 图表option
 	 */
 	public GsonOption getOption(String tableName,List<Column> dimension,Map<String,Column> measures,SeriesType seriesType);
-	/**
-	* @Description: 改版的getOption
-	* @Author:   chenweimin
-	*/
-	public GsonOption getOption(String tableName, List<Dimension> dimensions, List<Measure> measures);
 }
