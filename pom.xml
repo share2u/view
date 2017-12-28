@@ -14,14 +14,49 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<log4j.version>1.2.17</log4j.version>
 		<jackson.version>2.8.4</jackson.version>
+		<jmockit.version>1.33</jmockit.version>
+
+		<!-- 是否跳过单元测试 -->
+		<maven.surefire.skip>false</maven.surefire.skip>
+		<maven.surefire.testFailureIgnore>true</maven.surefire.testFailureIgnore>
+		<argLine>-Xms512m -Xmx1024m</argLine>
+		<!-- 是否跳过单元测试覆盖率统计 -->
+		<sonar.skip>false</sonar.skip>
+		<jacoco.version></jacoco.version>
+		<!-- 如果你想过滤掉一些自动生成的代码，比如：mybatis entity/mapper，请将下面打开 -->
+		<!--
+        <sonar.exclusions>
+           src/main/java/com/daojia/ptht/order/repository/pojo/**/*,
+           src/main/java/com/daojia/ptht/order/repository/mybatismapper/**/*
+        </sonar.exclusions>
+        -->
 	</properties>
 	<dependencies>
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit-coverage</artifactId>
+			<version>1.23</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<!-- 表示开发的时候引入，发布的时候不会加载此包 -->
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.agent</artifactId>
+			<classifier>runtime</classifier>
+			<scope>test</scope>
+			<version>0.7.7.201606060606</version>
 		</dependency>
 		<!-- spring核心包 -->
 		<dependency>
@@ -246,13 +281,13 @@
 			<artifactId>maven-surefire-plugin</artifactId>
 			<version>2.19.1</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.jmockit/jmockit -->
-		<dependency>
-			<groupId>org.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
-			<version>1.33</version>
-			<scope>test</scope>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.jacoco</groupId>-->
+			<!--<artifactId>org.jacoco.agent</artifactId>-->
+			<!--<classifier>runtime</classifier>-->
+			<!--<scope>test</scope>-->
+			<!--<version>${jacoco.version}</version>-->
+		<!--</dependency>-->
 
 	</dependencies>
 
@@ -282,7 +317,7 @@
 					</connectors>
 				</configuration>
 			</plugin>
-			<!--Maven 编译插件 -->
+			<!-- 编译插件，请检查pom中的compiler插件，如果有skip配置，一定不要配置为skip=true -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -291,6 +326,7 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<encoding>UTF-8</encoding>
+					<!--<skip>true</skip>-->
 				</configuration>
 			</plugin>
 			<!-- AspectJ 编译插件 -->
@@ -313,6 +349,43 @@
 						<!-- <aspectLibrary> <groupId>org.springframework</groupId> <artifactId>spring-aspects</artifactId> 
 							</aspectLibrary> -->
 					</aspectLibraries>
+				</configuration>
+			</plugin>
+			<!-- 单元测试覆盖率 -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.7.201606060606</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<skip>${sonar.skip}</skip>
+							<!-- 如果你想过滤掉一些自动生成的代码,即计算覆盖率的时候不计入该部分代码，比如：mybatis entity/mapper，请将下面打开 -->
+							<!-- 注意，和sonar.exclusions不同，不包含src/main/java，同时只支持 * 和 ? 通配符，不支持 "**"
+                            <excludes>
+                                <exclude>com/daojia/ptht/order/repository/pojo/*</exclude>
+                                <exclude>com/daojia/ptht/order/repository/mybatismapper/?/service</exclude>
+                            </excludes>
+                            -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- 单元测试，如果之前项目中有配置的surefire插件，一定要替换成下面的形式 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<skip>${maven.surefire.skip}</skip>
+					<testFailureIgnore>${maven.surefire.testFailureIgnore}</testFailureIgnore>
+					<!-- 添加下面两行，解决单元测试时wf、scf抛错 -->
+					<useManifestOnlyJar>false</useManifestOnlyJar>
+					<useSystemClassLoader>true</useSystemClassLoader>
 				</configuration>
 			</plugin>
 		</plugins>
