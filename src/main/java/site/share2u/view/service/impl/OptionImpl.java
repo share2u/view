@@ -16,63 +16,97 @@ import com.github.abel533.echarts.series.Series;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.share2u.view.dao.OptionMapper;
-import site.share2u.view.pojo.Column;
-import site.share2u.view.pojo.Dimension;
-import site.share2u.view.pojo.Measure;
-import site.share2u.view.pojo.PageData;
+import site.share2u.view.enums.DataType;
+import site.share2u.view.pojo.*;
 import site.share2u.view.service.OptionService;
 import site.share2u.view.util.CEcharts;
+import site.share2u.view.util.MakeSql;
 
 import java.util.*;
 
 @Service("optionService")
 public class OptionImpl implements OptionService {
 
-	
+
 	@Autowired
 	private OptionMapper optionMapper;
 
 	@Override
-	public List<SeriesType> getTypes(List<Dimension> dimensions, List<Measure> measures) {
-		ArrayList<SeriesType> seriesTypes = new ArrayList<SeriesType>();
-		//TODO 判断推荐的类型--重点
-		/*
-		int size = types.size();
-		if(measures.size()>0){
-			switch (size) {
-			case 0:
-				
-				break;
-			case 1:
-				if(types.contains("date")||types.contains("datetime")){
-					seriesTypes.add(SeriesType.line);
-					seriesTypes.add(SeriesType.bar);
-				}else {
-					seriesTypes.add(SeriesType.bar);
-					seriesTypes.add(SeriesType.line);
-					seriesTypes.add(SeriesType.scatter); 
-				}
-				break;
-			case 2:
-				if(types.contains("date")||types.contains("datetime")){
-					seriesTypes.add(SeriesType.line);
-					seriesTypes.add(SeriesType.bar);
-				}else{
-					seriesTypes.add(SeriesType.bar);
-					seriesTypes.add(SeriesType.line);
-				}
-				break;
-			case 3:
-				
-				break;
-			default:
-				
-				break;
-			}
-		}*/
-		return seriesTypes;
+	public List<SeriesType> getTypes(String tableName,List<Dimension> dimensions, List<Measure> measures) {
+		DimensionFact dimensionFact = new DimensionFact();
+		String sql = MakeSql.getSql(tableName, dimensions);
+		long t1 = System.currentTimeMillis();
+		List<PageData> optionData = optionMapper.getOptionData(sql);
+		long t2 = System.currentTimeMillis();
+		System.out.println("数据库执行时间"+(t2-t1)/1000F+"秒 ");
+		dimensionFact.setDimensionCount(dimensions.size());
+		dimensionFact.setMeasureCount(measures.size());
+		//1、遍历取出维度的数量 select count(distinct dimension) from tableName;
+		//2、维度类型list
+		//3、维度计数
+		//4、度量计数
+		List<DataType> dimensionsType =  new ArrayList<>();
+		List<Integer> dimensionsSum = new ArrayList<>();
+		for (int i =0;i<optionData.size();i++) {
+			dimensionsSum.add(Integer.parseInt(String.valueOf(optionData.get(i).get("tmp"))));
+			dimensionsType.add(dimensions.get(i).getDataType());
+		}
+		dimensionFact.setDimensionsSum(dimensionsSum);
+		dimensionFact.setDimensionsType(dimensionsType);
+		return getSeriesTypeByFact(dimensionFact);
 	}
 
+	private List<SeriesType> getSeriesTypeByFact(DimensionFact dimensionFact){
+		List<SeriesType> seriesTypes = new ArrayList<SeriesType>();
+		Integer dimensionCount = dimensionFact.getDimensionCount();
+		Integer measureCount = dimensionFact.getMeasureCount();
+		List<Integer> dimensionsSum = dimensionFact.getDimensionsSum();
+		List<DataType> dimensionsType = dimensionFact.getDimensionsType();
+		//纵向柱状图
+		if(dimensionCount == 1 && measureCount ==1 && dimensionsSum.get(0)<=12){
+			seriesTypes.add(SeriesType.bar);
+		}
+		//横向柱状图
+		if(dimensionCount == 1 && measureCount ==1 && dimensionsSum.get(0)>12){
+			seriesTypes.add(SeriesType.bar);
+		}
+		//堆叠柱状图
+		if(dimensionCount ==2 && measureCount ==1){
+			seriesTypes.add(SeriesType.bar);
+		}
+		//散点图
+		if(measureCount==2 && (dimensionCount==0 || dimensionCount ==1)){
+			seriesTypes.add(SeriesType.scatter);
+		}
+		//气泡图
+		if(measureCount==3 && dimensionCount ==1){
+			seriesTypes.add(SeriesType.scatter);
+		}
+		//漏斗图
+		if(dimensionCount ==1 && measureCount==1 && dimensionsSum.get(0)<=12){
+			seriesTypes.add(SeriesType.funnel);
+		}
+		//折线图
+		if(dimensionCount==0 && measureCount ==2){
+			seriesTypes.add(SeriesType.line);
+		}
+		if (dimensionCount==1 && measureCount ==1){
+			seriesTypes.add(SeriesType.line);
+		}
+		//面积图
+		if(dimensionCount ==1 && measureCount ==2){
+			seriesTypes.add(SeriesType.line);
+		}
+		//饼图
+		if(dimensionCount==1 && measureCount==1 && dimensionsSum.get(0)<9){
+			seriesTypes.add(SeriesType.pie);
+		}
+		//平行坐标图
+		if(dimensionCount+measureCount>2){
+			seriesTypes.add(SeriesType.parallel);
+		}
+		return seriesTypes;
+	}
 	@Override
 	public GsonOption getOption(String tableName, List<Column> dimension, Map<String, Column> measures,
 			SeriesType seriesType) {
@@ -105,7 +139,7 @@ public class OptionImpl implements OptionService {
 
 	/**
 	 * 根据sql 读取数据 字段会乱序
-	 * 
+	 *
 	 * @param sql
 	 * @return
 	 */
@@ -116,7 +150,7 @@ public class OptionImpl implements OptionService {
 
 	/**
 	 * 画图
-	 * 
+	 *
 	 * @param dimension
 	 * @param measures
 	 * @param seriesType
@@ -287,7 +321,7 @@ public class OptionImpl implements OptionService {
 				}
 				scatter.setData(serieData);
 				series.add(scatter);
-				
+
 			}
 		} else {
 			Series scatter = new Bar();
@@ -305,7 +339,7 @@ public class OptionImpl implements OptionService {
 			series.add(scatter);
 		}
 		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
-		
+
 	}
 	/**
 	 * 散点图
@@ -369,7 +403,7 @@ public class OptionImpl implements OptionService {
 				}
 				scatter.setData(serieData);
 				series.add(scatter);
-				
+
 			}
 		} else {
 			Series scatter = new Scatter();
@@ -387,7 +421,7 @@ public class OptionImpl implements OptionService {
 			series.add(scatter);
 		}
 		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
-		
+
 	}
 
 	/**

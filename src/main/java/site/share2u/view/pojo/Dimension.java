@@ -10,6 +10,14 @@ public class Dimension {
     private String name;
     private DataType dataType;
 
+    public Dimension() {
+    }
+
+    public Dimension(String name, DataType dataType) {
+        this.name = name;
+        this.dataType = dataType;
+    }
+
     public String getName() {
         return name;
     }

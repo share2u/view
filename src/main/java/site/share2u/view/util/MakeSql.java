@@ -10,6 +10,13 @@ import java.util.List;
  * @Author chenweimin
  */
 public class MakeSql {
+    /**
+     *  拼接获取option数据的sql
+     * @param tableName
+     * @param dimensions
+     * @param measures
+     * @return
+     */
     public static String getSql(String tableName,List<Dimension> dimensions, List<Measure> measures){
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
@@ -38,4 +45,27 @@ public class MakeSql {
         }
         return sb.toString();
     }
+
+    /**
+     *  拼接获取table 列 去重计数的sql
+     * @param tableName
+     * @param dimensions
+     * @return
+     */
+    public static String getSql(String tableName,List<Dimension> dimensions){
+        StringBuilder sb = new StringBuilder();
+        for (Dimension dimension: dimensions) {
+            sb.append("select count(distinct ");
+            sb.append(dimension.getName());
+            sb.append(" ) as tmp from "+ tableName);
+            sb.append( " union ");
+        }
+        if (dimensions != null && dimensions.size() > 0) {
+            sb.delete(sb.length() - 6,sb.length()-1);
+        }
+        return sb.toString();
+
+    }
+
+
 }

@@ -14,9 +14,9 @@ public interface OptionService {
 	 * 根据维度和度量推荐图表
 	 * @return 返回可以采用的图表类型
 	 */
-	public List<SeriesType> getTypes(List<Dimension> types, List<Measure> measures);
-	
-	
+	public List<SeriesType> getTypes(String tableName,List<Dimension> types, List<Measure> measures);
+
+
 	/**
 	 * 根据图表等一些参数画图
 	 * @param dimension 维度项

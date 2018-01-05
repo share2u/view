@@ -5,20 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.share2u.view.dao.OptionMapper;
 import site.share2u.view.pojo.PageData;
-import site.share2u.view.service.OptionDataService;
+import site.share2u.view.service.TableDateService;
 
 import java.util.List;
 
+/**
+ * Created by Administrator on 2018/1/5.
+ */
 @Service
-public class OptionDataServiceImpl implements OptionDataService {
-    protected Logger log =  Logger.getLogger(OptionDataServiceImpl.class);
+public class TableDateImpl implements TableDateService {
+    protected  Logger log = Logger.getLogger(TableDateImpl.class);
     @Autowired
-    private OptionMapper optionMapper;
-
+    OptionMapper optionMapper;
 
     @Override
-    public List<PageData> getOptionData(String sql) {
-        log.info("获取数据的sql:"+sql);
+    public List<PageData> getCoiumnCount(String sql) {
+        log.info("取列计数的sql  为"+sql);
         List<PageData> optionData = optionMapper.getOptionData(sql);
         return optionData;
     }

@@ -40,7 +40,7 @@ private List<OptionFactory> optionFactories;
     public ResponseBO getTuiJianType(String tableName, List<Dimension> dimensions, List<Measure> measures) {
         ResponseBO rb = new ResponseBO();
         //TODO 从数据库中读取一些信息--可以从做缓存
-        List<SeriesType> types = optionService.getTypes(dimensions, measures);
+        List<SeriesType> types = optionService.getTypes(tableName,dimensions, measures);
         rb.setData(JSON.toJSON(types));
         return rb;
     }
