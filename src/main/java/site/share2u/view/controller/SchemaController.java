@@ -25,6 +25,7 @@ public class SchemaController {
 	public ResponseBO getAllTables() {
 		List<Table> tables = schemaService.getTables();
 		ResponseBO responseBO = new ResponseBO();
+		System.out.println("hahhhhhh");
 		responseBO.setData(tables);
 		return responseBO;
 	}

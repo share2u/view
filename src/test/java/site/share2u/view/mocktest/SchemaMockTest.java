@@ -18,7 +18,7 @@ public class SchemaMockTest {
      * mocked会将类的所有的对象的方法都mock,(在同一个测试用例中)
      * injectable会将某个对象中的方法进行mock
      */
-    @Test
+   /* @Test
     public void testExpection(@Mocked SimpleTool simpleTool) {
         new Expectations() {{
             simpleTool.fun1(anyString);
@@ -37,7 +37,7 @@ public class SchemaMockTest {
             times = 2;
         }};
     }
-
+*/
     @Test
     public void testMockUp() {
         //影响该类的所有的实例

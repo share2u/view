@@ -15,10 +15,11 @@ import site.share2u.view.service.Context;
 import site.share2u.view.service.OptionFactory;
 import site.share2u.view.service.OptionService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/option")
+@RequestMapping("/chart")
 public class OptionController {
 /*
  * 1.根据维度等获得推荐类型
@@ -45,6 +46,17 @@ private List<OptionFactory> optionFactories;
         return rb;
     }
 
+    public static void main(String[] str){
+        ResponseBO rb =new ResponseBO();
+        List<SeriesType> types =new ArrayList<SeriesType>();
+        types.add(SeriesType.line);
+        types.add(SeriesType.bar);
+        types.add(SeriesType.parallel);
+        types.add(SeriesType.scatter);
+        types.add(SeriesType.pie);
+        rb.setData(JSON.toJSON(types));
+        System.out.println(JSON.toJSONString(rb));
+    }
     /**
     * @Description: 生成某个option
     * @Author:   chenweimin
