@@ -5,6 +5,7 @@ import com.github.abel533.echarts.json.GsonOption;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;
 import site.share2u.view.pojo.PageData;
+import site.share2u.view.pojo.SeriesTypeView;
 
 import java.util.List;
 
@@ -13,6 +14,6 @@ import java.util.List;
  * @Author chenweimin
  */
 public interface OptionFactory {
-    public SeriesType getSupportSeriesType();
+    public SeriesTypeView getSupportSeriesType();
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData);
 }

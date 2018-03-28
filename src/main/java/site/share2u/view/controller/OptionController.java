@@ -1,16 +1,13 @@
 package site.share2u.view.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.github.abel533.echarts.Option;
 import com.github.abel533.echarts.code.SeriesType;
 import com.github.abel533.echarts.json.GsonOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import site.share2u.view.pojo.Dimension;
-import site.share2u.view.pojo.Measure;
-import site.share2u.view.pojo.ResponseBO;
+import org.springframework.web.bind.annotation.*;
+import site.share2u.view.pojo.*;
 import site.share2u.view.service.Context;
 import site.share2u.view.service.OptionFactory;
 import site.share2u.view.service.OptionService;
@@ -32,11 +29,21 @@ public class OptionController {
 private OptionService optionService;
 @Autowired
 private List<OptionFactory> optionFactories;
-    /*
-     * 前后端传递大参数
-     * 1，可以根据参数直接生成新的option2.已经形成的option要数据库参数加js路径
-     *
+
+    /**
+     * 获取仪表盘的多个option内容
      */
+    @RequestMapping(value="/options/{id}")
+    @ResponseBody
+    public ResponseBO getOptionsByDashboardId(@PathVariable("id")Integer dashboardId){
+        ResponseBO responseBO = new ResponseBO();
+        List<OptionView> options = optionService.getOptionByDashboardId(dashboardId);
+        responseBO.setData(options);
+        return responseBO;
+    }
+
+
+    //推荐的图表类型
     @RequestMapping(value = "/recommemd")
     public ResponseBO getTuiJianType(String tableName, List<Dimension> dimensions, List<Measure> measures) {
         ResponseBO rb = new ResponseBO();
@@ -46,27 +53,22 @@ private List<OptionFactory> optionFactories;
         return rb;
     }
 
-    public static void main(String[] str){
-        ResponseBO rb =new ResponseBO();
-        List<SeriesType> types =new ArrayList<SeriesType>();
-        types.add(SeriesType.line);
-        types.add(SeriesType.bar);
-        types.add(SeriesType.parallel);
-        types.add(SeriesType.scatter);
-        types.add(SeriesType.pie);
-        rb.setData(JSON.toJSON(types));
-        System.out.println(JSON.toJSONString(rb));
-    }
     /**
-    * @Description: 生成某个option
-    * @Author:   chenweimin
+     * 知道了图表类型生成选定的option
     */
-    @RequestMapping(value="/option",method = RequestMethod.POST)
-    public ResponseBO createOption(SeriesType seriesType,String tableName, List<Dimension> dimensions, List<Measure> measures){
+    @RequestMapping(value="/option/create",method = RequestMethod.POST)
+    public ResponseBO createOption(@RequestBody OptionVO optionVO){
+        Integer seriesType=optionVO.getSeriesType();
+        String tableName=optionVO.getTableName();
+        List<Dimension> dimensions=optionVO.getDimensions();
+        List<Measure> measures=optionVO.getMeasures();
+
         ResponseBO rb = new ResponseBO();
+
         Context context = new Context();//优化位置，类似springmvc单例多线程
-        context.setSeriesType(getOptionFactory(seriesType));
+        context.setOptionFactory(getOptionFactory(SeriesTypeView.getName(seriesType)));
         GsonOption option = context.generOption(tableName, dimensions, measures);
+
         rb.setData(option);
         return rb;
     }
@@ -74,7 +76,7 @@ private List<OptionFactory> optionFactories;
     /**
      *  根据OPTION类型引入相应的option实现类
      */
-    private OptionFactory getOptionFactory(SeriesType seriesType) {
+    private OptionFactory getOptionFactory(SeriesTypeView seriesType) {
         OptionFactory optionFactory = null;
         for (OptionFactory tmpFactory : optionFactories) {
             if (tmpFactory.getSupportSeriesType().equals(seriesType)) {
@@ -85,11 +87,21 @@ private List<OptionFactory> optionFactories;
         return optionFactory;
     }
     /**
-     * @Description: 获得某个option,要根据这个option可以还原到创建当时那个option的信息
+     * @Description: 获得某个option
      */
     @RequestMapping(value="/option/{id}",method = RequestMethod.GET)
-    public ResponseBO createOption(@PathVariable("id") String optionId){
+    public ResponseBO getOption(@PathVariable("id") String optionId){
         ResponseBO rb = new ResponseBO();
+
+        return rb;
+    }
+    /**
+     * 保存option
+     */
+    @RequestMapping(value="/option/save",method = RequestMethod.POST)
+    public ResponseBO saveOption(OptionView option){
+        ResponseBO rb = new ResponseBO();
+
         return rb;
     }
 

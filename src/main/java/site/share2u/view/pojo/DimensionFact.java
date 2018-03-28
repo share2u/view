@@ -1,7 +1,5 @@
 package site.share2u.view.pojo;
 
-import site.share2u.view.enums.DataType;
-
 import java.util.List;
 
 /**
@@ -11,7 +9,7 @@ import java.util.List;
 public class DimensionFact {
 
     Integer dimensionCount;//维度的数量
-    List<DataType> dimensionsType;//维度s类型
+    List<Integer> dimensionsType;//维度s类型
     List<Integer> dimensionsSum;//维度s数量
     Integer measureCount;//度量计数
 
@@ -41,11 +39,11 @@ public class DimensionFact {
         this.measureCount = measureCount;
     }
 
-    public List<DataType> getDimensionsType() {
+    public List<Integer> getDimensionsType() {
         return dimensionsType;
     }
 
-    public void setDimensionsType(List<DataType> dimensionsType) {
+    public void setDimensionsType(List<Integer> dimensionsType) {
         this.dimensionsType = dimensionsType;
     }
 }

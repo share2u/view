@@ -5,6 +5,7 @@ import com.github.abel533.echarts.json.GsonOption;
 import site.share2u.view.pojo.Column;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;
+import site.share2u.view.pojo.OptionView;
 import site.share2u.view.service.OptionService;
 
 import java.util.List;
@@ -19,8 +20,10 @@ public class OptionDroolsImpl implements OptionService {
         return null;
     }
 
+
+
     @Override
-    public GsonOption getOption(String tableName, List<Column> dimension, Map<String, Column> measures, SeriesType seriesType) {
+    public List<OptionView> getOptionByDashboardId(Integer dashboardId) {
         return null;
     }
 }

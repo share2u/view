@@ -1,25 +1,11 @@
 package site.share2u.view.service.impl;
 
-import com.github.abel533.echarts.Legend;
-import com.github.abel533.echarts.Title;
-import com.github.abel533.echarts.axis.Axis;
-import com.github.abel533.echarts.axis.ValueAxis;
-import com.github.abel533.echarts.code.AxisType;
-import com.github.abel533.echarts.code.LineType;
 import com.github.abel533.echarts.code.SeriesType;
-import com.github.abel533.echarts.data.Data;
-import com.github.abel533.echarts.json.GsonOption;
-import com.github.abel533.echarts.series.Bar;
-import com.github.abel533.echarts.series.Line;
-import com.github.abel533.echarts.series.Scatter;
-import com.github.abel533.echarts.series.Series;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.share2u.view.dao.OptionMapper;
-import site.share2u.view.enums.DataType;
 import site.share2u.view.pojo.*;
 import site.share2u.view.service.OptionService;
-import site.share2u.view.util.CEcharts;
 import site.share2u.view.util.MakeSql;
 
 import java.util.*;
@@ -45,7 +31,7 @@ public class OptionImpl implements OptionService {
 		//2、维度类型list
 		//3、维度计数
 		//4、度量计数
-		List<DataType> dimensionsType =  new ArrayList<>();
+		List<Integer> dimensionsType =  new ArrayList<>();
 		List<Integer> dimensionsSum = new ArrayList<>();
 		for (int i =0;i<optionData.size();i++) {
 			dimensionsSum.add(Integer.parseInt(String.valueOf(optionData.get(i).get("tmp"))));
@@ -61,7 +47,7 @@ public class OptionImpl implements OptionService {
 		Integer dimensionCount = dimensionFact.getDimensionCount();
 		Integer measureCount = dimensionFact.getMeasureCount();
 		List<Integer> dimensionsSum = dimensionFact.getDimensionsSum();
-		List<DataType> dimensionsType = dimensionFact.getDimensionsType();
+		List<Integer> dimensionsType = dimensionFact.getDimensionsType();
 		//纵向柱状图
 		if(dimensionCount == 1 && measureCount ==1 && dimensionsSum.get(0)<=12){
 			seriesTypes.add(SeriesType.bar);
@@ -107,35 +93,26 @@ public class OptionImpl implements OptionService {
 		}
 		return seriesTypes;
 	}
+//	@Override
+//	public GsonOption getOption(String tableName, List<Column> dimension, Map<String, Column> measures,
+//			SeriesType seriesType) {
+//		// 1.组装sql
+//		String sql = setSql(tableName, dimension, measures);
+//		System.out.println(sql);
+//		// 2.取得数据
+//		List<PageData> data = getOptionData(sql);
+//		// 3.封装option
+//		GsonOption option = setOption(dimension, measures, seriesType, data);
+//		return option;
+//	}
+
 	@Override
-	public GsonOption getOption(String tableName, List<Column> dimension, Map<String, Column> measures,
-			SeriesType seriesType) {
-		// 1.组装sql
-		String sql = setSql(tableName, dimension, measures);
-		System.out.println(sql);
-		// 2.取得数据
-		List<PageData> data = getOptionData(sql);
-		// 3.封装option
-		GsonOption option = setOption(dimension, measures, seriesType, data);
-		return option;
+	public List<OptionView> getOptionByDashboardId(Integer dashboardId) {
+		List<OptionView> optionsByDashboardId = optionMapper.getOptionsByDashboardId(dashboardId);
+		return optionsByDashboardId;
 	}
 
-	private Map<String, Set<Object>> getEnum(List<Column> dimension, List<PageData> data) {
-		Map<String, Set<Object>> map = new HashMap<>();
-		for (int i = 0; i < dimension.size(); i++) {
-			Set set = new HashSet<>();
-			map.put(dimension.get(i).getColumnName(), set);
-		}
-		// 遍历数据拿出维度数据枚举
-		for (int i = 0; i < data.size(); i++) {
-			PageData pageData = data.get(i);
-			for (int j = 0; j < dimension.size(); j++) {
-				map.get(dimension.get(j).getColumnName()).add(pageData.get(dimension.get(j).getColumnName()));
-			}
-		}
 
-		return map;
-	}
 
 	/**
 	 * 根据sql 读取数据 字段会乱序
@@ -148,281 +125,171 @@ public class OptionImpl implements OptionService {
 		return optionData;
 	}
 
-	/**
-	 * 画图
-	 *
-	 * @param dimension
-	 * @param measures
-	 * @param seriesType
-	 * @param data
-	 * @return
-	 */
-	private GsonOption setOption(List<Column> dimension, Map<String, Column> measures, SeriesType seriesType,
-			List<PageData> data) {
-		GsonOption option = null;
-		switch (seriesType) {
-		case line:
-			option = setLineOption(dimension, measures, data);
-			break;
-		case bar:
-			option = setBarOption(dimension, measures, data);
-			break;
-		case scatter:
-			option = setScatterOption(dimension, measures, data);
-			break;
 
-		default:
-			break;
-		}
-		return option;
-	}
-
-	/**
-	 * 折线图
-	 */
-	private GsonOption setLineOption(List<Column> dimension, Map<String, Column> measures, List<PageData> data) {
-		Map<String, Set<Object>> dimensionEnum = getEnum(dimension, data);
-		CEcharts cEcharts = new CEcharts();
-		Title title = new Title();
-		title.setText("默认的图表标题");
-		// 如果维度为两个，添加第二个维度为图例
-		Legend legend = null;
-		Set<Object> d1Enum =null;
-		if (dimension.size() == 2) {
-			d1Enum = dimensionEnum.get(dimension.get(1).getColumnName());
-			legend = new Legend();
-			List<Data> legendData = new ArrayList<>();
-			for (Object object : d1Enum) {
-				legendData.add(new Data(object.toString()));
-			}
-			legend.setData(legendData);
-		}
-		// 设置x轴的数据
-		List<Axis> xAxis = new ArrayList<>();
-		ValueAxis xAxisx = new ValueAxis();
-		xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
-		if (dimension.get(0).getDataType().equals("varchar") || dimension.get(0).getDataType().equals("char")) {
-			xAxisx.setType(AxisType.category);// 类目轴必须设置data
-		}
-		List<Object> d2Enum = new ArrayList<>();// 第二维作为x轴
-		d2Enum.addAll(dimensionEnum.get(dimension.get(0).getColumnName()));
-		xAxisx.setData(d2Enum);
-		xAxis.add(xAxisx);
-		// 设置y轴的数据
-		List<Axis> yAxis = new ArrayList<>();
-		ValueAxis yAxisy = new ValueAxis();
-		yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
-		yAxis.add(yAxisy);
-		// 数据区域
-		List<Series> series = new ArrayList<>();
-		if (dimension.size() > 1) {
-			// 创建多系列的数据--d1的个数
-			Iterator<Object> d1Iterator = d1Enum.iterator();
-			while (d1Iterator.hasNext()) {
-				String dimensionName = (String) d1Iterator.next();
-				Series scatter = new Line();
-				scatter.setName(dimensionName);
-				List<List<Object>> serieData = new ArrayList<>();
-				for (int i = 0; i < data.size(); i++) {
-					PageData pageData = data.get(i);// 单行数据
-					if (pageData.get(dimension.get(1).getColumnName()).equals(dimensionName)) {// 是这个系列
-						List<Object> data1 = new ArrayList<Object>();
-						for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
-							String key = iterator.next();
-							if (dimensionName.equals(pageData.get(key))) {
-								continue;
-							}
-							data1.add(pageData.get(key));
-						}
-						serieData.add(data1);
-					}
-				}
-				scatter.setData(serieData);
-				series.add(scatter);
-
-			}
-		} else {
-			Series scatter = new Line();
-			List<List<Object>> serieData = new ArrayList<>();
-			for (int i = 0; i < data.size(); i++) {
-				PageData pageData = data.get(i);// 单行数据
-				List<Object> data1 = new ArrayList<Object>();
-				for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
-					String key = iterator.next();
-					data1.add(pageData.get(key));
-				}
-				serieData.add(data1);
-			}
-			scatter.setData(serieData);
-			series.add(scatter);
-		}
-		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
-
-	}
 	/**
 	 * 柱状图
 	 */
-	private GsonOption setBarOption(List<Column> dimension, Map<String, Column> measures, List<PageData> data) {
-		Map<String, Set<Object>> dimensionEnum = getEnum(dimension, data);
-		CEcharts cEcharts = new CEcharts();
-		Title title = new Title();
-		title.setText("默认的图表标题");
-		// 如果维度为两个，添加第二个维度为图例
-		Legend legend = null;
-		Set<Object> d1Enum =null;
-		if (dimension.size() == 2) {
-			d1Enum = dimensionEnum.get(dimension.get(1).getColumnName());
-			legend = new Legend();
-			List<Data> legendData = new ArrayList<>();
-			for (Object object : d1Enum) {
-				legendData.add(new Data(object.toString()));
-			}
-			legend.setData(legendData);
-		}
-		// 设置x轴的数据
-		List<Axis> xAxis = new ArrayList<>();
-		ValueAxis xAxisx = new ValueAxis();
-		xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
-		if (dimension.get(0).getDataType().equals("varchar") || dimension.get(0).getDataType().equals("char")) {
-			xAxisx.setType(AxisType.category);// 类目轴必须设置data
-		}
-		List<Object> d2Enum = new ArrayList<>();// 第二维作为x轴
-		d2Enum.addAll(dimensionEnum.get(dimension.get(0).getColumnName()));
-		xAxisx.setData(d2Enum);
-		xAxis.add(xAxisx);
-		// 设置y轴的数据
-		List<Axis> yAxis = new ArrayList<>();
-		ValueAxis yAxisy = new ValueAxis();
-		yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
-		yAxis.add(yAxisy);
-		// 数据区域
-		List<Series> series = new ArrayList<>();
-		if (dimension.size() > 1) {
-			// 创建多系列的数据--d1的个数
-			Iterator<Object> d1Iterator = d1Enum.iterator();
-			while (d1Iterator.hasNext()) {
-				String dimensionName = (String) d1Iterator.next();
-				Series scatter = new Bar();
-				scatter.setName(dimensionName);
-				List<List<Object>> serieData = new ArrayList<>();
-				for (int i = 0; i < data.size(); i++) {
-					PageData pageData = data.get(i);// 单行数据
-					if (pageData.get(dimension.get(1).getColumnName()).equals(dimensionName)) {// 是这个系列
-						List<Object> data1 = new ArrayList<Object>();
-						for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
-							String key = iterator.next();
-							if (dimensionName.equals(pageData.get(key))) {
-								continue;
-							}
-							data1.add(pageData.get(key));
-						}
-						serieData.add(data1);
-					}
-				}
-				scatter.setData(serieData);
-				series.add(scatter);
-
-			}
-		} else {
-			Series scatter = new Bar();
-			List<List<Object>> serieData = new ArrayList<>();
-			for (int i = 0; i < data.size(); i++) {
-				PageData pageData = data.get(i);// 单行数据
-				List<Object> data1 = new ArrayList<Object>();
-				for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
-					String key = iterator.next();
-					data1.add(pageData.get(key));
-				}
-				serieData.add(data1);
-			}
-			scatter.setData(serieData);
-			series.add(scatter);
-		}
-		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
-
-	}
+//	private GsonOption setBarOption(List<Column> dimension, Map<String, Column> measures, List<PageData> data) {
+//		Map<String, Set<Object>> dimensionEnum = getEnum(dimension, data);
+//		CEcharts cEcharts = new CEcharts();
+//		Title title = new Title();
+//		title.setText("默认的图表标题");
+//		// 如果维度为两个，添加第二个维度为图例
+//		Legend legend = null;
+//		Set<Object> d1Enum =null;
+//		if (dimension.size() == 2) {
+//			d1Enum = dimensionEnum.get(dimension.get(1).getColumnName());
+//			legend = new Legend();
+//			List<Data> legendData = new ArrayList<>();
+//			for (Object object : d1Enum) {
+//				legendData.add(new Data(object.toString()));
+//			}
+//			legend.setData(legendData);
+//		}
+//		// 设置x轴的数据
+//		List<Axis> xAxis = new ArrayList<>();
+//		ValueAxis xAxisx = new ValueAxis();
+//		xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
+//		if (dimension.get(0).getDataType().equals("varchar") || dimension.get(0).getDataType().equals("char")) {
+//			xAxisx.setType(AxisType.category);// 类目轴必须设置data
+//		}
+//		List<Object> d2Enum = new ArrayList<>();// 第二维作为x轴
+//		d2Enum.addAll(dimensionEnum.get(dimension.get(0).getColumnName()));
+//		xAxisx.setData(d2Enum);
+//		xAxis.add(xAxisx);
+//		// 设置y轴的数据
+//		List<Axis> yAxis = new ArrayList<>();
+//		ValueAxis yAxisy = new ValueAxis();
+//		yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
+//		yAxis.add(yAxisy);
+//		// 数据区域
+//		List<Series> series = new ArrayList<>();
+//		if (dimension.size() > 1) {
+//			// 创建多系列的数据--d1的个数
+//			Iterator<Object> d1Iterator = d1Enum.iterator();
+//			while (d1Iterator.hasNext()) {
+//				String dimensionName = (String) d1Iterator.next();
+//				Series scatter = new Bar();
+//				scatter.setName(dimensionName);
+//				List<List<Object>> serieData = new ArrayList<>();
+//				for (int i = 0; i < data.size(); i++) {
+//					PageData pageData = data.get(i);// 单行数据
+//					if (pageData.get(dimension.get(1).getColumnName()).equals(dimensionName)) {// 是这个系列
+//						List<Object> data1 = new ArrayList<Object>();
+//						for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
+//							String key = iterator.next();
+//							if (dimensionName.equals(pageData.get(key))) {
+//								continue;
+//							}
+//							data1.add(pageData.get(key));
+//						}
+//						serieData.add(data1);
+//					}
+//				}
+//				scatter.setData(serieData);
+//				series.add(scatter);
+//
+//			}
+//		} else {
+//			Series scatter = new Bar();
+//			List<List<Object>> serieData = new ArrayList<>();
+//			for (int i = 0; i < data.size(); i++) {
+//				PageData pageData = data.get(i);// 单行数据
+//				List<Object> data1 = new ArrayList<Object>();
+//				for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
+//					String key = iterator.next();
+//					data1.add(pageData.get(key));
+//				}
+//				serieData.add(data1);
+//			}
+//			scatter.setData(serieData);
+//			series.add(scatter);
+//		}
+//		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
+//
+//	}
 	/**
 	 * 散点图
 	 */
-	private GsonOption setScatterOption(List<Column> dimension, Map<String, Column> measures, List<PageData> data) {
-		Map<String, Set<Object>> dimensionEnum = getEnum(dimension, data);
-		CEcharts cEcharts = new CEcharts();
-		Title title = new Title();
-		title.setText("默认的图表标题");
-		// 如果维度为两个，添加第二个维度为图例
-		Legend legend = null;
-		Set<Object> d1Enum =null;
-		if (dimension.size() == 2) {
-			d1Enum = dimensionEnum.get(dimension.get(1).getColumnName());
-			legend = new Legend();
-			List<Data> legendData = new ArrayList<>();
-			for (Object object : d1Enum) {
-				legendData.add(new Data(object.toString()));
-			}
-			legend.setData(legendData);
-		}
-		// 设置x轴的数据
-		List<Axis> xAxis = new ArrayList<>();
-		ValueAxis xAxisx = new ValueAxis();
-		xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
-		if (dimension.get(0).getDataType().equals("varchar") || dimension.get(0).getDataType().equals("char")) {
-			xAxisx.setType(AxisType.category);// 类目轴必须设置data
-		}
-		List<Object> d2Enum = new ArrayList<>();// 第二维作为x轴
-		d2Enum.addAll(dimensionEnum.get(dimension.get(0).getColumnName()));
-		xAxisx.setData(d2Enum);
-		xAxis.add(xAxisx);
-		// 设置y轴的数据
-		List<Axis> yAxis = new ArrayList<>();
-		ValueAxis yAxisy = new ValueAxis();
-		yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
-		yAxis.add(yAxisy);
-		// 数据区域
-		List<Series> series = new ArrayList<>();
-		if (dimension.size() > 1) {
-			// 创建多系列的数据--d1的个数
-			Iterator<Object> d1Iterator = d1Enum.iterator();
-			while (d1Iterator.hasNext()) {
-				String dimensionName = (String) d1Iterator.next();
-				Series scatter = new Scatter();
-				scatter.setName(dimensionName);
-				List<List<Object>> serieData = new ArrayList<>();
-				for (int i = 0; i < data.size(); i++) {
-					PageData pageData = data.get(i);// 单行数据
-					if (pageData.get(dimension.get(1).getColumnName()).equals(dimensionName)) {// 是这个系列
-						List<Object> data1 = new ArrayList<Object>();
-						for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
-							String key = iterator.next();
-							if (dimensionName.equals(pageData.get(key))) {
-								continue;
-							}
-							data1.add(pageData.get(key));
-						}
-						serieData.add(data1);
-					}
-				}
-				scatter.setData(serieData);
-				series.add(scatter);
-
-			}
-		} else {
-			Series scatter = new Scatter();
-			List<List<Object>> serieData = new ArrayList<>();
-			for (int i = 0; i < data.size(); i++) {
-				PageData pageData = data.get(i);// 单行数据
-				List<Object> data1 = new ArrayList<Object>();
-				for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
-					String key = iterator.next();
-					data1.add(pageData.get(key));
-				}
-				serieData.add(data1);
-			}
-			scatter.setData(serieData);
-			series.add(scatter);
-		}
-		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
-
-	}
+//	private GsonOption setScatterOption(List<Column> dimension, Map<String, Column> measures, List<PageData> data) {
+//		Map<String, Set<Object>> dimensionEnum = getEnum(dimension, data);
+//		CEcharts cEcharts = new CEcharts();
+//		Title title = new Title();
+//		title.setText("默认的图表标题");
+//		// 如果维度为两个，添加第二个维度为图例
+//		Legend legend = null;
+//		Set<Object> d1Enum =null;
+//		if (dimension.size() == 2) {
+//			d1Enum = dimensionEnum.get(dimension.get(1).getColumnName());
+//			legend = new Legend();
+//			List<Data> legendData = new ArrayList<>();
+//			for (Object object : d1Enum) {
+//				legendData.add(new Data(object.toString()));
+//			}
+//			legend.setData(legendData);
+//		}
+//		// 设置x轴的数据
+//		List<Axis> xAxis = new ArrayList<>();
+//		ValueAxis xAxisx = new ValueAxis();
+//		xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
+//		if (dimension.get(0).getDataType().equals("varchar") || dimension.get(0).getDataType().equals("char")) {
+//			xAxisx.setType(AxisType.category);// 类目轴必须设置data
+//		}
+//		List<Object> d2Enum = new ArrayList<>();// 第二维作为x轴
+//		d2Enum.addAll(dimensionEnum.get(dimension.get(0).getColumnName()));
+//		xAxisx.setData(d2Enum);
+//		xAxis.add(xAxisx);
+//		// 设置y轴的数据
+//		List<Axis> yAxis = new ArrayList<>();
+//		ValueAxis yAxisy = new ValueAxis();
+//		yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
+//		yAxis.add(yAxisy);
+//		// 数据区域
+//		List<Series> series = new ArrayList<>();
+//		if (dimension.size() > 1) {
+//			// 创建多系列的数据--d1的个数
+//			Iterator<Object> d1Iterator = d1Enum.iterator();
+//			while (d1Iterator.hasNext()) {
+//				String dimensionName = (String) d1Iterator.next();
+//				Series scatter = new Scatter();
+//				scatter.setName(dimensionName);
+//				List<List<Object>> serieData = new ArrayList<>();
+//				for (int i = 0; i < data.size(); i++) {
+//					PageData pageData = data.get(i);// 单行数据
+//					if (pageData.get(dimension.get(1).getColumnName()).equals(dimensionName)) {// 是这个系列
+//						List<Object> data1 = new ArrayList<Object>();
+//						for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
+//							String key = iterator.next();
+//							if (dimensionName.equals(pageData.get(key))) {
+//								continue;
+//							}
+//							data1.add(pageData.get(key));
+//						}
+//						serieData.add(data1);
+//					}
+//				}
+//				scatter.setData(serieData);
+//				series.add(scatter);
+//
+//			}
+//		} else {
+//			Series scatter = new Scatter();
+//			List<List<Object>> serieData = new ArrayList<>();
+//			for (int i = 0; i < data.size(); i++) {
+//				PageData pageData = data.get(i);// 单行数据
+//				List<Object> data1 = new ArrayList<Object>();
+//				for (Iterator<String> iterator = pageData.keySet().iterator(); iterator.hasNext();) {
+//					String key = iterator.next();
+//					data1.add(pageData.get(key));
+//				}
+//				serieData.add(data1);
+//			}
+//			scatter.setData(serieData);
+//			series.add(scatter);
+//		}
+//		return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
+//
+//	}
 
 	/**
 	 * 组装sql根据维度与度量

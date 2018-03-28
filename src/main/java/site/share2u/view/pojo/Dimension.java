@@ -1,22 +1,17 @@
 package site.share2u.view.pojo;
 
-import site.share2u.view.enums.DataType;
-
 /**
  * @Description 维度
  * @Author chenweimin
  */
 public class Dimension {
     private String name;
-    private DataType dataType;
+    private Integer dataType;
 
     public Dimension() {
     }
 
-    public Dimension(String name, DataType dataType) {
-        this.name = name;
-        this.dataType = dataType;
-    }
+
 
     public String getName() {
         return name;
@@ -26,11 +21,16 @@ public class Dimension {
         this.name = name;
     }
 
-    public DataType getDataType() {
+    public Integer getDataType() {
         return dataType;
     }
 
-    public void setDataType(DataType dataType) {
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
+    }
+
+    public Dimension(String name, Integer dataType) {
+        this.name = name;
         this.dataType = dataType;
     }
 }

@@ -10,7 +10,7 @@ import site.share2u.view.util.MakeSql;
 import java.util.List;
 
 /**
- * @Description
+ * @Description 建造者模式
  * @Author chenweimin
  */
 public class Context {
@@ -18,10 +18,36 @@ public class Context {
     @Autowired
     private OptionDataService optionDataService;
 
-    public void setSeriesType(OptionFactory optionFactory) {
+    public OptionFactory getOptionFactory() {
+        return optionFactory;
+    }
+
+    /**
+     * 设置optionfactory
+     * @param optionFactory
+     */
+    public void setOptionFactory(OptionFactory optionFactory) {
         this.optionFactory = optionFactory;
     }
 
+    public OptionDataService getOptionDataService() {
+        return optionDataService;
+    }
+
+    public void setOptionDataService(OptionDataService optionDataService) {
+        this.optionDataService = optionDataService;
+    }
+
+    /**
+     * 已知图表类型生成相应option
+     * 1、组装sql
+     * 2、通过sql提取数据
+     * 3、创建option通过维度组合、数据
+     * @param tableName
+     * @param dimensions
+     * @param measures
+     * @return
+     */
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures){
         String sql = MakeSql.getSql(tableName, dimensions, measures);
         List<PageData> optionData = optionDataService.getOptionData(sql);

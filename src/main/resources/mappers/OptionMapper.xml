@@ -4,4 +4,17 @@
 	<select id="getOptionData" parameterType="String" resultType="PageData">
 		${value}
 	</select>
+	<select id="getOptionsByDashboardId" parameterType="Integer" resultType="OptionView">
+		SELECT
+			id,
+			dashboard_id dashboardId,
+			table_name tableName,
+			content option1,
+			chart_type seriesTypeView
+		FROM
+			`view_option` a
+		WHERE
+				a.vaild = 1
+			AND a.dashboard_id = #{dashboardId}
+	</select>
 </mapper>
