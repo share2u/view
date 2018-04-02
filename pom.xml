@@ -16,6 +16,8 @@
 		<jackson.version>2.8.4</jackson.version>
 		<jmockit.version>1.33</jmockit.version>
 		<drools.version>7.0.0.Final</drools.version>
+		<quartz.version>2.2.1</quartz.version>
+		<kettle.version>5.4.1.8-209</kettle.version>
 		<!-- 是否跳过单元测试 -->
 		<maven.surefire.skip>false</maven.surefire.skip>
 		<maven.surefire.testFailureIgnore>true</maven.surefire.testFailureIgnore>
@@ -23,6 +25,7 @@
 		<!-- 是否跳过单元测试覆盖率统计 -->
 		<sonar.skip>false</sonar.skip>
 		<jacoco.version></jacoco.version>
+
 		<!-- 如果你想过滤掉一些自动生成的代码，比如：mybatis entity/mapper，请将下面打开 -->
 		<!--
         <sonar.exclusions>
@@ -31,6 +34,13 @@
         </sonar.exclusions>
         -->
 	</properties>
+	<repositories>
+		<repository>
+			<id>pentaho-repo</id>
+			<name>pentaho Repository</name>
+			<url>http://nexus.pentaho.org/content/groups/omni</url>
+		</repository>
+	</repositories>
 	<dependencies>
         <dependency>
             <groupId>org.jmockit</groupId>
@@ -160,7 +170,51 @@
 			<artifactId>druid</artifactId>
 			<version>1.0.29</version>
 		</dependency>
+		<!--quartz S-->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${quartz.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>${quartz.version}</version>
+		</dependency>
+		<!--quartz E-->
+		<!--kettle S-->
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-core</artifactId>
+			<version>${kettle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.verhas</groupId>
+			<artifactId>license3j</artifactId>
+			<version>1.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-dbdialog</artifactId>
+			<version>${kettle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-engine</artifactId>
+			<version>${kettle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>pentaho</groupId>
+			<artifactId>metastore</artifactId>
+			<version>${kettle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
+		</dependency>
 
+	<!--kettle E-->
 		<!-- JSTL标签类 -->
 		<dependency>
 			<groupId>jstl</groupId>
@@ -308,6 +362,20 @@
 			<groupId>org.jbpm</groupId>
 			<artifactId>jbpm-test</artifactId>
 			<version>${drools.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!--drools end-->
 	</dependencies>
@@ -337,9 +405,9 @@
 					<verbose>true</verbose>
 					<privateScope>true</privateScope>
 					<showWeaveInfo>true</showWeaveInfo>
-					<source>1.8</source>
-					<target>1.8</target>
-					<complianceLevel>1.8</complianceLevel>
+					<source>1.7</source>
+					<target>1.7</target>
+					<complianceLevel>1.7</complianceLevel>
 					<!-- <encoding>UTF-8</encoding> -->
 					<verbose>false</verbose>
 					<outxml>true</outxml>
