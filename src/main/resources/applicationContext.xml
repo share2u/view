@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
@@ -69,7 +69,7 @@
 	<!--切面  -->
 	<bean id="dataSourceInterceptor0" class="site.share2u.view.interceptor.DataSourceInterceptor0"/>
 	<bean id="dataSourceInterceptor1" class="site.share2u.view.interceptor.DataSourceInterceptor1"/>
-	
+
 	<!-- 注册sqlsessionFactory,完成mybatis和spring整合 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -89,5 +89,23 @@
 	</bean>
 	<!-- 事务增强驱动 对@Transaction的具体业务类，方法上进行事务增强 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
-
+	<!--定时任务 S-->
+	<bean id="JobOneDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="JobOne"/>
+		<property name="targetMethod" value="execute"/>
+	</bean>
+		<!--触发器 S-->
+	<bean id="JonOneTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="JobOneDetail"/>
+		<property name="cronExpression" value="0 0 * * * ?"/>
+	</bean>
+		<!--触发器 E-->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="JonOneTrigger"/>
+			</list>
+		</property>
+	</bean>
+	<!--定时任务 E-->
 </beans>
