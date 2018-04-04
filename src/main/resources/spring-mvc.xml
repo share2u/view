@@ -8,7 +8,7 @@
                     http://www.springframework.org/schema/context
                     http://www.springframework.org/schema/context/spring-context-4.0.xsd
                     http://www.springframework.org/schema/mvc
-                    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"> 
+                    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
      <!-- 自动扫描 @Controller 注册处理器 -->
 	<context:component-scan base-package="site.share2u.view.controller" />
 	<!--避免IE执行AJAX时，返回JSON出现下载文件 -->
@@ -19,7 +19,7 @@
 				<value>text/html;charset=UTF-8</value>
 			</list>
 		</property>
-	</bean> 
+	</bean>
 	<!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射   处理器适配器(具体controll的方法)-->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
@@ -28,25 +28,37 @@
 				<ref bean="mappingJacksonHttpMessageConverter" /> <!-- JSON转换器 -->
 			</list>
 		</property>
-	</bean> 
+	</bean>
 	<!-- 定义跳转的文件的前后缀 ，视图模式配置   视图解析器-->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
-	</bean> 
+	</bean>
 	<!-- 文件上传配置  id名固定,由dispatcherServlet直接调用-->
 	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!-- 默认编码 -->
-		<property name="defaultEncoding" value="UTF-8" /> 
+		<property name="defaultEncoding" value="UTF-8" />
 		<!-- 上传文件大小限制为31M，31*1024*1024 -->
-		<property name="maxUploadSize" value="32505856" /> 
+		<property name="maxUploadSize" value="32505856" />
 		<!-- 内存中的最大值 -->
 		<property name="maxInMemorySize" value="1048576" />
 	</bean>
 	<!--注解mvc的注解驱动，完成消息的转换  -->
-	<mvc:annotation-driven/>
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="serializationInclusion">
+							<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 	<!--mvc:resource 配置静态资源的访问  -->
 	<mvc:resources location="/assets/" mapping="/assets/**"/>
 	<mvc:resources location="/js/" mapping="/js/**"/>

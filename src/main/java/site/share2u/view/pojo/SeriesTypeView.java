@@ -1,51 +1,28 @@
 package site.share2u.view.pojo;
 
-import com.github.abel533.echarts.code.SeriesType;
-
 /**
- * Created by Administrator on 2018/3/27.
+ * User: CWM
+ * Date: 2018/4/3.
  */
-public enum SeriesTypeView {
-    LINE(1, "line"),
-    LINES(2, "lines"),
-    BAR(3, "bar"),
-    SCATTER(4, "scatter"),
-    EFFECTSCATTER(5, "effectScatter"),
-    CANDLESTICK(6, "candlestick"),
-    PIE(7, "pie"),
-    GROUP(8, "graph"),
-    MAP(9, "map"),
-    FUNNEL(10, "funnel"),
-    GAUGE(11, "gauge"),
-    TREEMAP(12, "treemap"),
-    HEATMAP(13, "heatmap"),
-    BOXPLOT(14, "boxplot"),
-    PARALLEL(15, "parallel"),
-    SANKEY(16, "sankey");
-
-    private int index;
+public class SeriesTypeView {
+    private Integer id;
     private String name;
-
-    SeriesTypeView(int index, String name) {
-        this.index = index;
+    private String remark;
+    
+    public SeriesTypeView() {
+    }
+    
+    public SeriesTypeView(Integer id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public static SeriesTypeView getName(int index){
-        for (SeriesTypeView stv:SeriesTypeView.values()) {
-            if(stv.getIndex()==index){
-                return stv;
-            }
-        }
-        return null;
+    public Integer getId() {
+        return id;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -54,5 +31,36 @@ public enum SeriesTypeView {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SeriesTypeView that = (SeriesTypeView) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        return result;
     }
 }

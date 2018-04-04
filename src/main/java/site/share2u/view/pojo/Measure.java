@@ -7,7 +7,7 @@ package site.share2u.view.pojo;
 public class Measure {
     private String name;
     private Integer dataType;
-    private String method;
+    private Integer method;
 
     public String getName() {
         return name;
@@ -27,12 +27,12 @@ public class Measure {
     public void setDataType(Integer dataType) {
         this.dataType = dataType;
     }
-
-    public String getMethod() {
+    
+    public Integer getMethod() {
         return method;
     }
-
-    public void setMethod(String method) {
+    
+    public void setMethod(Integer method) {
         this.method = method;
     }
 }

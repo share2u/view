@@ -11,11 +11,12 @@ import site.share2u.view.pojo.*;
 import site.share2u.view.service.Context;
 import site.share2u.view.service.OptionFactory;
 import site.share2u.view.service.OptionService;
+import site.share2u.view.service.SerieTypeService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/chart")
 public class OptionController {
 /*
@@ -29,6 +30,10 @@ public class OptionController {
 private OptionService optionService;
 @Autowired
 private List<OptionFactory> optionFactories;
+@Autowired
+private Context context;
+@Autowired
+private SerieTypeService serieTypeService;
 
     /**
      * 获取仪表盘的多个option内容
@@ -65,8 +70,7 @@ private List<OptionFactory> optionFactories;
 
         ResponseBO rb = new ResponseBO();
 
-        Context context = new Context();//优化位置，类似springmvc单例多线程
-        context.setOptionFactory(getOptionFactory(SeriesTypeView.getName(seriesType)));
+        context.setOptionFactory(getOptionFactory(serieTypeService.getNameById(seriesType)));
         GsonOption option = context.generOption(tableName, dimensions, measures);
 
         rb.setData(option);

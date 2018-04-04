@@ -1,6 +1,5 @@
 package site.share2u.view.service;
 
-import com.github.abel533.echarts.code.SeriesType;
 import com.github.abel533.echarts.json.GsonOption;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;

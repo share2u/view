@@ -12,6 +12,9 @@
 					http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                     http://www.springframework.org/schema/tx
                     http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- 启用注解 -->
+	<context:annotation-config />
+
 	<!-- 组件扫描器，指定的包下扫描注解 -->
 	<context:component-scan base-package="site.share2u.view" >
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -97,7 +100,7 @@
 		<!--触发器 S-->
 	<bean id="JonOneTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="JobOneDetail"/>
-		<property name="cronExpression" value="0 0 * * * ?"/>
+		<property name="cronExpression" value="0 0 0 */3  * ?"/>
 	</bean>
 		<!--触发器 E-->
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">

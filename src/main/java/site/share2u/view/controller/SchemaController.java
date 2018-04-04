@@ -20,7 +20,9 @@ public class SchemaController {
 	@Autowired
 	private SchemaService schemaService;
 
-	//获取工作表
+	/**
+	 *  获取工作表
+	 */
 	@RequestMapping(value = {"/tables"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseBO getAllTables() {
@@ -30,7 +32,9 @@ public class SchemaController {
 		responseBO.setData(tables);
 		return responseBO;
 	}
-	//获取维度列表
+	/**
+	 * 获取维度列表
+	 */
 	@RequestMapping(value={"/tables/{tableName}"},produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseBO getColumes(@PathVariable String tableName){

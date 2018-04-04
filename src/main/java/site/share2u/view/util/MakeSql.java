@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class MakeSql {
     /**
-     *  拼接获取option数据的sql
+     *  拼接获取option数据的sql，不区分数据的类型
      * @param tableName
      * @param dimensions
      * @param measures
@@ -27,10 +27,22 @@ public class MakeSql {
             sb.deleteCharAt(sb.length() - 1);
         }
         if (measures != null && measures.size() > 0) {
-            if (dimensions.size() > 0)
+            if (dimensions.size() > 0) {
                 sb.append(",");
+            }
             for (Measure measure:measures) {
-                sb.append(measure.getMethod() + "("+measure.getName()+") as" +measure.getName()+"agg,");
+                Integer method = measure.getMethod();
+                //TODO 从数据库查询
+                String methodName="sum";
+                switch (method){
+                    case 1:
+                    methodName="sum";
+                    break;
+                    case 2:
+                    methodName="max";
+                    break;
+                }
+                sb.append(methodName + "("+measure.getName()+") as " +"agg_"+measure.getName()+",");
             }
             sb.deleteCharAt(sb.length() - 1);
         }

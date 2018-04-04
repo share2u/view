@@ -304,8 +304,9 @@ public class OptionImpl implements OptionService {
 			sb.deleteCharAt(sb.length() - 1);
 		}
 		if (measures != null && measures.size() > 0) {
-			if (dimension.size() > 0)
-				sb.append(",");
+			if (dimension.size() > 0) {
+                sb.append(",");
+            }
 			Set<String> keySet = measures.keySet();
 			for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
 				String aggType = iterator.next();// 聚合参数类型

@@ -1,22 +1,26 @@
 package site.share2u.view.service;
 
 import com.github.abel533.echarts.json.GsonOption;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;
 import site.share2u.view.pojo.PageData;
 import site.share2u.view.util.MakeSql;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * @Description 建造者模式
  * @Author chenweimin
  */
+@Component
 public class Context {
     private OptionFactory optionFactory;
     @Autowired
-    private OptionDataService optionDataService;
+    private  OptionDataService optionDataService;
 
     public OptionFactory getOptionFactory() {
         return optionFactory;
@@ -30,13 +34,7 @@ public class Context {
         this.optionFactory = optionFactory;
     }
 
-    public OptionDataService getOptionDataService() {
-        return optionDataService;
-    }
 
-    public void setOptionDataService(OptionDataService optionDataService) {
-        this.optionDataService = optionDataService;
-    }
 
     /**
      * 已知图表类型生成相应option
