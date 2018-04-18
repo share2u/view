@@ -170,51 +170,6 @@
 			<artifactId>druid</artifactId>
 			<version>1.0.29</version>
 		</dependency>
-		<!--quartz S-->
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>${quartz.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz-jobs</artifactId>
-			<version>${quartz.version}</version>
-		</dependency>
-		<!--quartz E-->
-		<!--kettle S-->
-		<dependency>
-			<groupId>pentaho-kettle</groupId>
-			<artifactId>kettle-core</artifactId>
-			<version>${kettle.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.verhas</groupId>
-			<artifactId>license3j</artifactId>
-			<version>1.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho-kettle</groupId>
-			<artifactId>kettle-dbdialog</artifactId>
-			<version>${kettle.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho-kettle</groupId>
-			<artifactId>kettle-engine</artifactId>
-			<version>${kettle.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>metastore</artifactId>
-			<version>${kettle.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>19.0</version>
-		</dependency>
-
-	<!--kettle E-->
 		<!-- JSTL标签类 -->
 		<dependency>
 			<groupId>jstl</groupId>
@@ -227,6 +182,11 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.9</version>
 		</dependency>
 
 
@@ -241,18 +201,8 @@
 			<artifactId>gson</artifactId>
 			<version>2.8.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- log end -->
+
+        <!-- log end -->
 		<!-- 映入JSON -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -263,7 +213,13 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-annotations</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -274,7 +230,13 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.3.1</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -292,25 +254,14 @@
 			<version>3.0.0.2</version>
 		</dependency>
 
-		<!--神经网络 -->
-		<dependency>
-			<groupId>org.beykery</groupId>
-			<artifactId>neuroph</artifactId>
-			<version>2.92</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
 
 		<!-- -->
-		<dependency>
+		<!--<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-resources-plugin</artifactId>
 			<exclusions>
-				<!--解决slf4j冲突 -->
+				&lt;!&ndash;解决slf4j冲突 &ndash;&gt;
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>jcl-over-slf4j</artifactId>
@@ -319,29 +270,40 @@
 					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
-			</exclusions>
+                <exclusion>
+                    <artifactId>maven-settings</artifactId>
+                    <groupId>org.apache.maven</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>plexus-utils</artifactId>
+                    <groupId>org.codehaus.plexus</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-jdk14</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
 			<version>2.7</version>
-		</dependency>
+		</dependency>-->
 		<!--时间工具 -->
-		<dependency>
+        <dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.9.9</version>
 		</dependency>
 
 
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-surefire-plugin</artifactId>
-			<version>2.19.1</version>
-		</dependency>
 		<!--<dependency>-->
-			<!--<groupId>org.jacoco</groupId>-->
-			<!--<artifactId>org.jacoco.agent</artifactId>-->
-			<!--<classifier>runtime</classifier>-->
-			<!--<scope>test</scope>-->
-			<!--<version>${jacoco.version}</version>-->
-		<!--</dependency>-->
+			<!--<groupId>org.apache.maven.plugins</groupId>-->
+			<!--<artifactId>maven-surefire-plugin</artifactId>-->
+			<!--<version>2.19.1</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>commons-lang3</artifactId>-->
+                    <!--<groupId>org.apache.commons</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 		<!--drools start-->
 		<dependency>
 			<groupId>org.kie</groupId>
@@ -352,12 +314,24 @@
 			<groupId>org.drools</groupId>
 			<artifactId>drools-core</artifactId>
 			<version>${drools.version}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-decisiontables</artifactId>
 			<version>${drools.version}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>org.jbpm</groupId>
 			<artifactId>jbpm-test</artifactId>
@@ -375,7 +349,23 @@
 					<artifactId>slf4j-api</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
-			</exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-compress</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<!--drools end-->
 	</dependencies>
@@ -394,65 +384,6 @@
 					<target>1.7</target>
 					<encoding>UTF-8</encoding>
 					<!--<skip>true</skip>-->
-				</configuration>
-			</plugin>
-			<!-- AspectJ 编译插件 -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.8</version>
-				<configuration>
-					<verbose>true</verbose>
-					<privateScope>true</privateScope>
-					<showWeaveInfo>true</showWeaveInfo>
-					<source>1.7</source>
-					<target>1.7</target>
-					<complianceLevel>1.7</complianceLevel>
-					<!-- <encoding>UTF-8</encoding> -->
-					<verbose>false</verbose>
-					<outxml>true</outxml>
-					<aspectLibraries>
-						<!-- 此处定义外部的aspect包，例如spring的事务aspect包 。这里引用的包必须在依赖中声明 -->
-						<!-- <aspectLibrary> <groupId>org.springframework</groupId> <artifactId>spring-aspects</artifactId>
-							</aspectLibrary> -->
-					</aspectLibraries>
-				</configuration>
-			</plugin>
-			<!-- 单元测试覆盖率 -->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.7.201606060606</version>
-				<executions>
-					<execution>
-						<id>default-prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<skip>${sonar.skip}</skip>
-							<!-- 如果你想过滤掉一些自动生成的代码,即计算覆盖率的时候不计入该部分代码，比如：mybatis entity/mapper，请将下面打开 -->
-							<!-- 注意，和sonar.exclusions不同，不包含src/main/java，同时只支持 * 和 ? 通配符，不支持 "**"
-                            <excludes>
-                                <exclude>com/daojia/ptht/order/repository/pojo/*</exclude>
-                                <exclude>com/daojia/ptht/order/repository/mybatismapper/?/service</exclude>
-                            </excludes>
-                            -->
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- 单元测试，如果之前项目中有配置的surefire插件，一定要替换成下面的形式 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
-				<configuration>
-					<skip>${maven.surefire.skip}</skip>
-					<testFailureIgnore>${maven.surefire.testFailureIgnore}</testFailureIgnore>
-					<!-- 添加下面两行，解决单元测试时wf、scf抛错 -->
-					<useManifestOnlyJar>false</useManifestOnlyJar>
-					<useSystemClassLoader>true</useSystemClassLoader>
 				</configuration>
 			</plugin>
 		</plugins>
