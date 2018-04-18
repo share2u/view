@@ -1,20 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="site.share2u.view.dao.OptionMapper">
-	<select id="getOptionData" parameterType="String" resultType="PageData">
+    <select id="getOptionData" parameterType="String" resultType="PageData">
 		${value}
 	</select>
-	<select id="getOptionsByDashboardId" parameterType="Integer" resultType="OptionView">
+	<resultMap id="OptionViewResultMap" type="OptionView">
+		<id column="id" property="id"/>
+		<result column="dashboard_id" property="dashboardId"/>
+		<result column="table_name" property="tableName"/>
+		<result column="content" property="option1"/>
+		<result column="vaild" property="vaild"/>
+		<association property="seriesTypeView" javaType="SeriesTypeView">
+			<id column="chart_type" property="chartName"/>
+		</association>
+
+	</resultMap>
+    <select id="getOptionsByDashboardId" parameterType="Integer" resultMap="OptionViewResultMap">
 		SELECT
 			id,
-			dashboard_id dashboardId,
-			table_name tableName,
-			content option1,
-			chart_type seriesTypeView
+			dashboard_id,
+			table_name,
+			content,
+			chart_type
 		FROM
 			`view_option` a
 		WHERE
 				a.vaild = 1
 			AND a.dashboard_id = #{dashboardId}
+	</select>
+    <insert id="saveOption" parameterType="OptionVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		view_option (
+		  dashboard_id,
+		  table_name,
+		  content,
+		  chart_type,
+		  vaild
+		)
+		VALUES
+		  (#{dashboardId}, #{tableName}, #{option1}, #{seriesType}, 1)
+	</insert>
+	<select id="getOption" parameterType="Integer" resultMap="OptionViewResultMap">
+		SELECT
+			id,
+			dashboard_id,
+			table_name,
+			content,
+			chart_type
+		FROM
+			`view_option` a
+		WHERE
+			a.vaild = 1
+			AND a.id = #{optionId}
 	</select>
 </mapper>

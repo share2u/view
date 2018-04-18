@@ -8,6 +8,15 @@ public class SeriesTypeView {
     private Integer id;
     private String name;
     private String remark;
+    private String chartName;
+    
+    public String getChartName() {
+        return chartName;
+    }
+    
+    public void setChartName(String chartName) {
+        this.chartName = chartName;
+    }
     
     public SeriesTypeView() {
     }
@@ -62,5 +71,15 @@ public class SeriesTypeView {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         return result;
+    }
+    
+    @Override
+    public String toString() {
+        return "SeriesTypeView{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", remark='" + remark + '\'' +
+                ", chartName='" + chartName + '\'' +
+                '}';
     }
 }

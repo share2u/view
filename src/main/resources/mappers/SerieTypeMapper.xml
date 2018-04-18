@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="site.share2u.view.dao.SerieTypeMapper">
-    <select id="getNameById" parameterType="Integer" resultType="SeriesTypeView">
+    <resultMap id="SeriesTypeViewResultMap" type="SeriesTypeView">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="chart_name" property="chartName"/>
+    </resultMap>
+    <select id="getNameById" parameterType="Integer" resultMap="SeriesTypeViewResultMap">
         select * from view_serietype where id=#{id}
     </select>
-    <select id="getTypes" resultType="SeriesTypeView">
+    <select id="getNameByName" parameterType="String" resultMap="SeriesTypeViewResultMap">
+        select * from view_serietype where chart_name=#{chartName}
+    </select>
+    <select id="getTypes" resultMap="SeriesTypeViewResultMap">
         select * from view_serietype
     </select>
 </mapper>

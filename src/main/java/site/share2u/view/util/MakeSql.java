@@ -1,5 +1,6 @@
 package site.share2u.view.util;
 
+import org.apache.log4j.Logger;
 import site.share2u.view.pojo.Dimension;
 import site.share2u.view.pojo.Measure;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * @Author chenweimin
  */
 public class MakeSql {
+    private static Logger log = Logger.getLogger(MakeSql.class);
     /**
      *  拼接获取option数据的sql，不区分数据的类型
      * @param tableName
@@ -18,6 +20,7 @@ public class MakeSql {
      * @return
      */
     public static String getSql(String tableName,List<Dimension> dimensions, List<Measure> measures){
+        log.info("获取"+tableName+"表中的关于--维度("+dimensions.toString()+")与度量（"+measures.toString()+")--的数据");
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
         if (dimensions != null && dimensions.size() > 0) {
@@ -31,17 +34,7 @@ public class MakeSql {
                 sb.append(",");
             }
             for (Measure measure:measures) {
-                Integer method = measure.getMethod();
-                //TODO 从数据库查询
-                String methodName="sum";
-                switch (method){
-                    case 1:
-                    methodName="sum";
-                    break;
-                    case 2:
-                    methodName="max";
-                    break;
-                }
+                String methodName = measure.getMethod();
                 sb.append(methodName + "("+measure.getName()+") as " +"agg_"+measure.getName()+",");
             }
             sb.deleteCharAt(sb.length() - 1);
@@ -55,6 +48,7 @@ public class MakeSql {
             }
             sb.deleteCharAt(sb.length() - 1);
         }
+        log.info("拼接的sql为："+sb.toString());
         return sb.toString();
     }
 

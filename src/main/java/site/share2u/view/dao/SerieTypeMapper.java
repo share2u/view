@@ -13,4 +13,5 @@ import java.util.List;
 public interface SerieTypeMapper {
     SeriesTypeView getNameById(Integer id);
     List<SeriesTypeView> getTypes();
+    SeriesTypeView getNameByName(String chartName);
 }

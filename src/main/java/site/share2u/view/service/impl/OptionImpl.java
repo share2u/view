@@ -16,8 +16,13 @@ public class OptionImpl implements OptionService {
 
 	@Autowired
 	private OptionMapper optionMapper;
-
-	@Override
+    
+    @Override
+    public OptionView getOption(Integer optionId) {
+        return optionMapper.getOption(optionId);
+    }
+    
+    @Override
 	public List<SeriesType> getTypes(String tableName,List<Dimension> dimensions, List<Measure> measures) {
 		DimensionFact dimensionFact = new DimensionFact();
 		String sql = MakeSql.getSql(tableName, dimensions);
@@ -111,9 +116,14 @@ public class OptionImpl implements OptionService {
 		List<OptionView> optionsByDashboardId = optionMapper.getOptionsByDashboardId(dashboardId);
 		return optionsByDashboardId;
 	}
-
-
-
+	
+	@Override
+	public OptionView saveOption(OptionVO optionVO) {
+		 optionMapper.saveOption(optionVO);
+		return getOption(optionVO.getId());
+	}
+	
+	
 	/**
 	 * 根据sql 读取数据 字段会乱序
 	 *

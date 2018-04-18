@@ -11,7 +11,11 @@ public class Table {
 	
 	public Table() {
 	}
-
+	
+	public Table(String tableName) {
+		TableName = tableName;
+	}
+	
 	public String getTableName() {
 		return TableName;
 	}

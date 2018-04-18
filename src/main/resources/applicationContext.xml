@@ -92,23 +92,4 @@
 	</bean>
 	<!-- 事务增强驱动 对@Transaction的具体业务类，方法上进行事务增强 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	<!--定时任务 S-->
-	<bean id="JobOneDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="JobOne"/>
-		<property name="targetMethod" value="execute"/>
-	</bean>
-		<!--触发器 S-->
-	<bean id="JonOneTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="JobOneDetail"/>
-		<property name="cronExpression" value="0 0 0 */3  * ?"/>
-	</bean>
-		<!--触发器 E-->
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="JonOneTrigger"/>
-			</list>
-		</property>
-	</bean>
-	<!--定时任务 E-->
 </beans>

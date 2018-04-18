@@ -33,4 +33,12 @@ public class Dimension {
         this.name = name;
         this.dataType = dataType;
     }
+    
+    @Override
+    public String toString() {
+        return "Dimension{" +
+                "name='" + name + '\'' +
+                ", dataType=" + dataType +
+                '}';
+    }
 }

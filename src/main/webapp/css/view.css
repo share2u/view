@@ -6,6 +6,11 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
     outline: 0;
     vertical-align: baseline;
 }
+html,html{
+    /*禁止页面滚动*/
+    overflow: hidden;
+    height: 100%;
+}
 
 #wrapper{
 	width:100%;

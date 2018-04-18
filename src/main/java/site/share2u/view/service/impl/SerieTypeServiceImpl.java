@@ -21,7 +21,12 @@ public class SerieTypeServiceImpl implements SerieTypeService {
     public SeriesTypeView getNameById(Integer id) {
         return serieTypeMapper.getNameById(id);
     }
-
+    
+    @Override
+    public SeriesTypeView getNameByName(String chartName) {
+        return serieTypeMapper.getNameByName(chartName);
+    }
+    
     @Override
     public List<SeriesTypeView> getTypes() {
         return null;

@@ -10,7 +10,7 @@ public class OptionView{
     private Integer dashboardId;
     private String tableName;
     private String option1;
-    private Integer seriesTypeView;//图表类型
+    private SeriesTypeView seriesTypeView;//图表类型
     private Integer vaild;
 
 
@@ -45,15 +45,15 @@ public class OptionView{
     public void setOption1(String option1) {
         this.option1 = option1;
     }
-
-    public Integer getSeriesTypeView() {
+    
+    public SeriesTypeView getSeriesTypeView() {
         return seriesTypeView;
     }
-
-    public void setSeriesTypeView(Integer seriesTypeView) {
+    
+    public void setSeriesTypeView(SeriesTypeView seriesTypeView) {
         this.seriesTypeView = seriesTypeView;
     }
-
+    
     public Integer getVaild() {
         return vaild;
     }

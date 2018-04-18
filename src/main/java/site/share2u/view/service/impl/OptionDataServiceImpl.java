@@ -18,7 +18,6 @@ public class OptionDataServiceImpl implements OptionDataService {
 
     @Override
     public List<PageData> getOptionData(String sql) {
-        log.info("获取数据的sql:"+sql);
         List<PageData> optionData = optionMapper.getOptionData(sql);
         return optionData;
     }

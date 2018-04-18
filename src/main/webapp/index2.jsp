@@ -1,159 +1,55 @@
-<%@ page language="Java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
-<%
-    String path = request.getContextPath();
-    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-            + path + "/";
-%>
-<!DOCTYPE HTML>
-<html lang="zh-CN">
+@{
+Layout = null;
+}
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <base href="<%=basePath%>">
-    <title>图表编辑</title>
-    <meta name="viewport"
-          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="format-detection" content="email=no">
-    <meta name="applicable-device" content="mobile">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-    <link rel="stylesheet"
-          href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
-    <link rel="stylesheet" href="assets/css/ace.min.css"
-          class="ace-main-stylesheet" id="main-ace-style" />
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <title>下拉框 - Ace Admin</title>
+    @* 这个控制宽度(只是控制div的) *@
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+
+    @* 以下两个对下拉框的样式有影响 *@
+    <link rel="stylesheet" href="/assets/css/chosen.css" />
+    <link rel="stylesheet" href="/assets/css/ace.min.css" />
+    　　 <link rel="stylesheet" href="/assets/css/css.css"/>
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+
+    <script src="/assets/js/jquery-2.1.4.min.js"></script>
     <![endif]-->
-    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
-    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
-    <link rel="stylesheet" href="css/view.css" />
+    <script src="/assets/js/chosen.jquery.min.js"></script>
 
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
-    <![endif]-->
-
-    <!-- inline styles related to this page -->
-
-    <!-- ace settings handler -->
-    <script src="assets/js/ace-extra.min.js"></script>
-
-    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
-
-    <!--[if lte IE 8]>
-    <script src="assets/js/html5shiv.min.js"></script>
-    <script src="assets/js/respond.min.js"></script>
-    <![endif]-->
-    <style>
-        body{
-            color:#393939;
-        }
-        #container {
-            width:100%;
-            margin:0px auto;/*主面板DIV居中*/
-        }
-        #header {
-            width:100%;
-            height:50px;
-            border:1px #F00 solid;
-            background-color: #438eb9;
-        }
-        #main {
-            width:100%;
-            height:600px;
-            border:1px #F00 solid;
-            background-color: #f2f2f2;
-        }
-        #footer {
-            width:100%;
-            height:50px;
-            border:1px #F00 solid;
-        }
-        .selectTitle{
-            width:100%;
-            height: 30px;
-            border:1px black solid;
-            background-color: #f2f2f2;
-
-        }
-        .cat {
-            float:left;
-            width:15%;
-            height:100%;
-            border:1px #F00 solid;
-            background-color: #fff;
-        }
-        .content {
-            float:left;
-            width:85%;
-            height:100%;
-            border:1px #3eff3a solid;
-            background-color: #fff;
-        }
-        #selectTableID{
-            float: left;
-            width: 75%;
-        }
-        #selectTableID select{
-            width: 200px;
-        }
-        .newViewID{
-            float: left;
-            margin-right: 30px;
-            width: 20%;
-        }
-    </style>
+    <script type="text/javascript">
+        $(function ($) {
+            $('.chosen-select').chosen({ allow_single_deselect: true });
+            //窗口大小改变时，下拉框跟着缩放
+            $(window).on('resize.chosen', function () {
+                var w = $('.chosen-select').parent().width();
+                $('.chosen-select').next().css({ 'width': w });
+            }).trigger('resize.chosen');
+        });
+    </script>
 </head>
-<body>
-<div id="container">
-    <div id="header">顶部</div>
-    <div id="main">
-        <div class="selectTitle">
-            <div id="selectTableID">
-                <select name="number" id="number">
-                    <option value="0">请选择数据源</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            </div>
-            <div class="newViewID">
-                <a href="##">新增图表</a>
-            </div>
 
-        </div>
-        <div style="clear: both;"></div>
-        <div>
-            <div class="cat">
-                <ul>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                    <li>aaaaa</li>
-                </ul>
-            </div>
-            <div class="content">
-                图表list
-            </div>
+<body>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xs-12 col-sm-4">
+            <!-- Html示例 -->
+            <select class="chosen-select" name="Hero" data-placeholder="请选择英雄...">
+                <option value=""></option>    <!-- 默认的Text里不要放东西，否则不会选择(请选择) -->
+                <option value="1">刘备</option>
+                <option value="2">关羽</option>
+                <option value="3">张飞</option>
+            </select>
+
+            <div class="space-4"></div>
+
+            <!-- MVC版示例 -->
+            @*对于AceAdmin很多-，在MVC中要用_代替*@
+            @Html.DropDownList("SelectListItem", null, null, new { @class = "chosen-select", data_placeholder="请选择英雄...", name = "Hero" })
         </div>
     </div>
-    <div id="footer">底部</div>
 </div>
-<script src="assets/js/jquery-2.1.4.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script>
-    $("#selectTableID select").change(function(){
-        console.log($(this).val());
-    })
-</script>
-
 </body>
 </html>

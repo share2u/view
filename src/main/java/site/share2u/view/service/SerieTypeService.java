@@ -15,6 +15,11 @@ public interface  SerieTypeService {
      * @return
      */
     SeriesTypeView getNameById(Integer id);
+    /**
+     * 根据name获取图表类型名称
+     * @return
+     */
+    SeriesTypeView getNameByName(String chartName);
 
     /**
      * 获取所有的图表类型

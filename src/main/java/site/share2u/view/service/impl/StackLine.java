@@ -54,7 +54,7 @@ public class StackLine implements OptionFactory {
     @Override
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData) {
 //        List<String> hashDimesion = OptionUtil.getHashDimesion(dimensions, measures);
-        Map<String, Set<Object>> dimensionEnum = OptionUtil.getEnum(dimensions, optionData);
+        Map<String, Set<String>> dimensionEnum = OptionUtil.getEnum(dimensions, optionData);
         
         CEcharts cEcharts = new CEcharts();
         Title title = new Title();
@@ -62,7 +62,7 @@ public class StackLine implements OptionFactory {
         
         // 如果维度为两个，添加第二个维度为图例
         Legend legend = new Legend();
-        Set<Object> d1Enum = dimensionEnum.get(dimensions.get(1).getName());
+        Set<String> d1Enum = dimensionEnum.get(dimensions.get(1).getName());
         List<Data> legendData = new ArrayList<>();
         for (Object object : d1Enum) {
             legendData.add(new Data(object.toString()));
@@ -93,7 +93,7 @@ public class StackLine implements OptionFactory {
         // 数据区域
         List<Series> series = new ArrayList<>();
         // 创建多系列的数据--d1的个数
-        Iterator<Object> d1Iterator = d1Enum.iterator();
+        Iterator<String> d1Iterator = d1Enum.iterator();
         while (d1Iterator.hasNext()) {
             Series scatter = new Line();
             //系列名称

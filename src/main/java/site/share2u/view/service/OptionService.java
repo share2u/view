@@ -2,10 +2,7 @@ package site.share2u.view.service;
 
 import com.github.abel533.echarts.code.SeriesType;
 import com.github.abel533.echarts.json.GsonOption;
-import site.share2u.view.pojo.Column;
-import site.share2u.view.pojo.Dimension;
-import site.share2u.view.pojo.Measure;
-import site.share2u.view.pojo.OptionView;
+import site.share2u.view.pojo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +12,7 @@ public interface OptionService {
 	 * 根据维度和度量推荐图表
 	 * @return 返回可以采用的图表类型
 	 */
-	public List<SeriesType> getTypes(String tableName,List<Dimension> types, List<Measure> measures);
+	List<SeriesType> getTypes(String tableName,List<Dimension> types, List<Measure> measures);
 
 
 //	/**
@@ -32,5 +29,16 @@ public interface OptionService {
 	 * @param dashboardId 仪表盘id
 	 * @return
 	 */
-	public List<OptionView>  getOptionByDashboardId(Integer dashboardId);
+	List<OptionView>  getOptionByDashboardId(Integer dashboardId);
+	
+	/**
+	 * 保存option
+	 * @param optionView
+	 * @return
+	 */
+	OptionView saveOption(OptionVO optionView);
+	/**
+	 * 获取option
+	 */
+	OptionView getOption(Integer optionId);
 }

@@ -34,7 +34,7 @@ public class LineOption implements OptionFactory {
     
     @Override
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData) {
-        Map<String, Set<Object>> dimensionEnum = OptionUtil.getEnum(dimensions, optionData);
+        Map<String, Set<String>> dimensionEnum = OptionUtil.getEnum(dimensions, optionData);
         CEcharts cEcharts = new CEcharts();
         Title title = new Title();
         title.setText("默认的图表标题");
@@ -46,6 +46,11 @@ public class LineOption implements OptionFactory {
             // 类目轴必须设置data
             xAxisx.setType(AxisType.category);
         }
+        
+        
+        List<String> d0Enum = new ArrayList<>();
+       
+        
         // 设置y轴的数据
         List<Axis> yAxis = new ArrayList<>();
         ValueAxis yAxisy = new ValueAxis();
@@ -59,13 +64,14 @@ public class LineOption implements OptionFactory {
             // 单行数据
             PageData pageData = optionData.get(i);
             ArrayList<Object> data1 = new ArrayList<Object>();
-            data1.add(pageData.get(dimensions.get(0).getName()));
+            data1.add(pageData.get(dimensions.get(0).getName()).toString());
+            d0Enum.add(pageData.get(dimensions.get(0).getName()).toString());
             data1.add(pageData.get("agg_" + measures.get(0).getName()));
             serieData.add(data1);
         }
         scatter.setData(serieData);
         series.add(scatter);
-        
+        xAxisx.setData(d0Enum);
         xAxis.add(xAxisx);
         return cEcharts.setScatterOption(title, null, xAxis, yAxis, series);
     }
