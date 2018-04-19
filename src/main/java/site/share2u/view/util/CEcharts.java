@@ -76,7 +76,7 @@ public class CEcharts {
 		return option;
 	}
 
-	public static  GsonOption setParallelOption(Title title,List<? super List<Object>> data,List<ParallelAxis> parallelAxis){
+	public   GsonOption setParallelOption(Title title,List<? super List<Object>> data,List<ParallelAxis> parallelAxis){
 		ParallelOption option = new ParallelOption();
 		Parallel parallel = new Parallel();
 		parallel.setData(data );

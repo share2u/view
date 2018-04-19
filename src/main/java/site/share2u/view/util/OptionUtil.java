@@ -69,7 +69,7 @@ public class OptionUtil {
             Iterator iterator = optionData.get(i).entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry next = (Map.Entry) iterator.next();
-                if (next.getKey() == dimensions.get(0).getName()) {
+                if (next.getKey().equals(dimensions.get(0).getName())) {
                     continue;
                 }
                 doubles.add(Double.parseDouble((next.getValue().toString())));

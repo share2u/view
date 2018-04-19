@@ -2,9 +2,9 @@ package site.share2u.view.util.som;
 
 import org.apache.log4j.Logger;
 import site.share2u.view.pojo.PageData;
+import site.share2u.view.util.TxtUtil;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -61,7 +61,7 @@ public class NeuralK {
         //最大学习率
         Kohonen_Design.max_learning_rate = 1.0;
         //最小学习率
-        Kohonen_Design.min_learning_rate = 0.000001;
+        Kohonen_Design.min_learning_rate = 0.01;
         //训练次数
         k_epochs = 10000;
         ep = 0;
@@ -152,26 +152,54 @@ public class NeuralK {
         Kohonen_Design.interim_learning_rate = adjusted_learning_rate * 1;
     }
     
-    private void test_Kohonen_network(int KNET) {
-        int tnet, dim, pattern, knodes;
-        tnet = KNET;
-        for (int ktest = 0; ktest < number_of_Kohonen_tests; ktest++) {
-            Kohonen_Test[ktest].request_Kohonen_data(tnet);
-            //TODO: 保存训练结果
-            for (pattern = 0; pattern < Kohonen_Test[ktest].sample_number; pattern++) {
-                for (knodes = 0; knodes < Kohonen_Design.maximum_number_of_clusters; knodes++) {
-                    for (dim = 0; dim < Kohonen_Design.dimensions_of_signal; dim++) {
-                        Kohonen_Design.node_in_cluster_layer[knodes].input_value[dim] = Kohonen_Test[ktest].number_of_samples[pattern].data_in_sample[dim];
-                    }
-                }
-                Kohonen_Design.kluster_nodes_compete_for_activation();
-                log.info(Kohonen_Design.node_in_cluster_layer[Kohonen_Design.kluster_champ].row + "-"
-                        + Kohonen_Design.node_in_cluster_layer[Kohonen_Design.kluster_champ].col);
+    private void test_Kohonen_network(int KNET,String pathName, List<List<Double>> optionData) {
+        try{
+            StringBuilder sb = new StringBuilder();
+            int tnet, dim, pattern, knodes;
+            tnet = KNET;
+            double realvalue;
+            File file = new File("D:\\SOM\\"+pathName+".txt");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String tableName = br.readLine();
+            String[] dims = br.readLine().split("\t");
+            String[] dimTmp =new String[optionData.size()];
+            for(int i=0;i<dimTmp.length;i++){
+                dimTmp[i]=br.readLine();
             }
-            Kohonen_Test[ktest].delete_signal_array();
+            br.close();
+            sb.append(tableName+"\n");
+            for (int i=0;i<dims.length;i++){
+                sb.append(dims[i]+"\t");
+            }
+            sb.append("\n");
+            for (int ktest = 0; ktest < number_of_Kohonen_tests; ktest++) {
+                //加载测试集
+                Kohonen_Test[ktest].request_Kohonen_data(tnet,optionData);
+                //使用模型
+                for (pattern = 0; pattern < Kohonen_Test[ktest].sample_number; pattern++) {
+                    for (knodes = 0; knodes < Kohonen_Design.maximum_number_of_clusters; knodes++) {
+                        for (dim = 0; dim < Kohonen_Design.dimensions_of_signal; dim++) {
+                            Kohonen_Design.node_in_cluster_layer[knodes].input_value[dim] = Kohonen_Test[ktest].number_of_samples[pattern].data_in_sample[dim];
+                        }
+                    }
+                    Kohonen_Design.kluster_nodes_compete_for_activation();
+            
+                    //读取第二行数据，hash 排序，读取后续数据，清空，重新插入
+                   sb.append(dimTmp[pattern]+"\t");
+                   for(int i=0;i<optionData.get(pattern).size();i++){
+                       sb.append(optionData.get(pattern).get(i)+"\t");
+                   }
+                    sb.append(Kohonen_Design.node_in_cluster_layer[Kohonen_Design.kluster_champ].row + "\t"
+                            + Kohonen_Design.node_in_cluster_layer[Kohonen_Design.kluster_champ].col+"\t");
+                    sb.append("\n");
+                }
+                Kohonen_Test[ktest].delete_signal_array();
+            }
+            TxtUtil.writeStr(pathName,sb.toString(),false);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        
-        //返回一个散点图
+       
     }
     
     /**
@@ -179,13 +207,13 @@ public class NeuralK {
      *
      * @param tt 建立神经网络的数量
      */
-    public void network_training_testing(int tt, List<List<Double>> optionData) {
+    public void network_training_testing(int tt, List<List<Double>> optionData,String pathName) {
         log.info("2.1、加载、归一化训练集");
         initialize_Kohonen_training_storage_array(tt, optionData);
         log.info("2.2、训练SOM模型");
         train_Kohonen_network(tt);
         log.info("2.3、使用SOM模型");
         establish_Kohonen_test_battery_size();
-        test_Kohonen_network(tt);
+        test_Kohonen_network(tt,pathName,optionData);
     }
 }

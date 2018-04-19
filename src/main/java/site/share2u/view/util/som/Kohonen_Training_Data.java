@@ -31,7 +31,6 @@ public class Kohonen_Training_Data {
     int sample_number;
     
     String filename;
-    List<List<Double>> optionData;
     
     /**
      * 获取当前网络的输入维度
@@ -94,17 +93,16 @@ public class Kohonen_Training_Data {
      * 明确样本数量，加载数据
      */
     
-    void specify_signal_sample_size() {
-        determine_sample_number();
-        load_data_into_array();
+    void specify_signal_sample_size(List<List<Double>> optionData) {
+        determine_sample_number(optionData);
+        load_data_into_array(optionData);
     }
     
     /**
      * 取得数据，明确样本数量，归一化样本数据
      */
     void request_Kohonen_data(int net_no, List<List<Double>> optionData) {
-        this.optionData = optionData;
-        specify_signal_sample_size();
+        specify_signal_sample_size(optionData);
         //归一化数据集
         normalize_data_in_array();
     }
@@ -112,7 +110,7 @@ public class Kohonen_Training_Data {
     /**
      * 计算出全部的样本数量
      */
-    void determine_sample_number() {
+    void determine_sample_number(List<List<Double>> optionData) {
         sample_number = optionData.size();
         log.info("样本数量是：" + sample_number);
     }
@@ -120,7 +118,7 @@ public class Kohonen_Training_Data {
     /**
      * 加载文件中的数据到一个二维数组中
      */
-    void load_data_into_array() {
+    void load_data_into_array( List<List<Double>> optionData) {
         //创建一个数组来包含样本的数量
         number_of_samples = new Sample_data[sample_number];
         //创建一个数组来容纳每一个样本的维度

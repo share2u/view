@@ -13,7 +13,7 @@ public class TxtUtil {
     /**
      * 根据路径写入string
      */
-    public static void writeStr(String fileName,String str){
+    public static void writeStr(String fileName,String str,Boolean boo){
         try {
             String path ="d:\\SOM\\"+fileName+".txt";
             File file = new File(path);
@@ -21,7 +21,7 @@ public class TxtUtil {
                 file.getParentFile().mkdir();
             }
             file.createNewFile();
-            FileWriter fw = new FileWriter(path,true);
+            FileWriter fw = new FileWriter(path,boo);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.append(str);
             bw.close();
@@ -31,4 +31,5 @@ public class TxtUtil {
         }
         
     }
+    
 }

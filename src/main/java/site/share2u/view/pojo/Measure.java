@@ -8,7 +8,16 @@ public class Measure {
     private String name;
     private Integer dataType;
     private String method;
-
+    
+    public Measure() {
+    }
+    
+    public Measure(String name, Integer dataType, String method) {
+        this.name = name;
+        this.dataType = dataType;
+        this.method = method;
+    }
+    
     public String getName() {
         return name;
     }
