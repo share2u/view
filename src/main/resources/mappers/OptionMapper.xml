@@ -4,17 +4,17 @@
     <select id="getOptionData" parameterType="String" resultType="PageData">
 		${value}
 	</select>
-	<resultMap id="OptionViewResultMap" type="OptionView">
-		<id column="id" property="id"/>
-		<result column="dashboard_id" property="dashboardId"/>
-		<result column="table_name" property="tableName"/>
-		<result column="content" property="option1"/>
-		<result column="vaild" property="vaild"/>
-		<association property="seriesTypeView" javaType="SeriesTypeView">
-			<id column="chart_type" property="chartName"/>
-		</association>
+    <resultMap id="OptionViewResultMap" type="OptionView">
+        <id column="id" property="id"/>
+        <result column="dashboard_id" property="dashboardId"/>
+        <result column="table_name" property="tableName"/>
+        <result column="content" property="option1"/>
+        <result column="vaild" property="vaild"/>
+        <association property="seriesTypeView" javaType="SeriesTypeView">
+            <id column="chart_type" property="chartName"/>
+        </association>
 
-	</resultMap>
+    </resultMap>
     <select id="getOptionsByDashboardId" parameterType="Integer" resultMap="OptionViewResultMap">
 		SELECT
 			id,
@@ -40,7 +40,31 @@
 		VALUES
 		  (#{dashboardId}, #{tableName}, #{option1}, #{seriesType}, 1)
 	</insert>
-	<select id="getOption" parameterType="Integer" resultMap="OptionViewResultMap">
+    <insert id="saveSOMOption" parameterType="OptionVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		view_option (
+		dashboard_id,
+		table_name,
+		content,
+		chart_type,
+		vaild,
+		pathname
+		)
+		VALUES
+		(#{dashboardId}, #{tableName}, #{option1}, #{seriesType}, 1,#{pathName})
+	</insert>
+
+    <insert id="saveDims" parameterType="java.util.List">
+        insert into view_dimension (option_id,dim_name,dim_oper)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.optionId},#{item.dimName},#{item.dimOper})
+        </foreach>
+    </insert>
+    <update id="deleOption" parameterType="Integer">
+		update view_option set vaild =0 where id = #{optionId}
+	</update>
+    <select id="getOption" parameterType="Integer" resultMap="OptionViewResultMap">
 		SELECT
 			id,
 			dashboard_id,
@@ -52,5 +76,18 @@
 		WHERE
 			a.vaild = 1
 			AND a.id = #{optionId}
+	</select>
+
+    <select id="getDims" resultType="PageData" parameterType="String">
+		SELECT
+			pathname,
+			dim_name
+		FROM
+			view_option a
+		LEFT JOIN view_dimension b ON a.id = b.option_id
+		WHERE
+			a.chart_type = "SOM"
+		AND a.vaild = 1
+		AND a.table_name=#{tableName}
 	</select>
 </mapper>

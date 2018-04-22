@@ -34,9 +34,10 @@ public class ParallelOption implements OptionFactory {
     
     @Override
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData) {
+        String[] split = tableName.split("@@");
         CEcharts cEcharts = new CEcharts();
         Title title = new Title();
-        title.setText("默认的图表标题");
+        title.setText(split[1]);
         List<List<Object>> data =  new ArrayList<>();
         List<ParallelAxis> parallelAxis = new ArrayList<>();
         for(int i=0;i<dimensions.size();i++){

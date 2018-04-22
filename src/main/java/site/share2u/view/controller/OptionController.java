@@ -2,18 +2,17 @@ package site.share2u.view.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.abel533.echarts.Legend;
-import com.github.abel533.echarts.Option;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.axis.Axis;
+import com.github.abel533.echarts.axis.ParallelAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
-import com.github.abel533.echarts.code.LineType;
+import com.github.abel533.echarts.code.AxisType;
 import com.github.abel533.echarts.code.SeriesType;
 import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.series.Scatter;
 import com.github.abel533.echarts.series.Series;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import site.share2u.view.pojo.*;
@@ -30,7 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -159,6 +158,29 @@ public class OptionController {
         optionVO.setOption1(optionVO.getOption1().replaceAll("\\s*", ""));
         OptionView optionView = optionService.saveOption(optionVO);
         //2、保存维度组合
+        
+        Integer optionId = optionView.getId();
+        List<Dimension> dimensions = optionVO.getDimensions();
+        List<Measure> measures = optionVO.getMeasures();
+        String seriesType = optionVO.getSeriesType();
+        String pathName = optionVO.getPathName();
+        List<Dim> dims = new ArrayList<>();
+        for (Dimension d: dimensions) {
+            Dim dim = new Dim();
+            dim.setOptionId(optionId);
+            dim.setDimName(d.getName());
+            dim.setDimOper("0");
+            dims.add(dim);
+        }
+        for(Measure m:measures){
+            Dim dim = new Dim();
+            dim.setOptionId(optionId);
+            dim.setDimName(m.getName());
+            dim.setDimOper(m.getMethod());
+            dims.add(dim);
+        }
+        optionService.saveDims(dims);
+        
         if (optionView != null) {
             rb.setCompleteCode(200);
             rb.setData(optionView);
@@ -168,9 +190,15 @@ public class OptionController {
         }
         return rb;
     }
+    @RequestMapping(value="/option/dele",method = RequestMethod.POST)
+    public ResponseBO deleOption(@RequestParam("optionId")Integer optionId){
+        ResponseBO rb = new ResponseBO();
+        optionService.deleOption(optionId);
+        return rb;
+    }
     
     @RequestMapping(value = "/option/kmeanScatter", method = RequestMethod.POST)
-    public ResponseBO KmeanScatter(@RequestParam("pathName") String pathName, @RequestParam("k") Integer k) {
+    public ResponseBO KmeanScatter(@RequestParam("pathName") String pathName, @RequestParam("k") Integer k,@RequestParam("titleText") String titleText) {
         ResponseBO responseBO = new ResponseBO();
         try {
             Kmeans km = new Kmeans(k);
@@ -204,7 +232,7 @@ public class OptionController {
             sbb.append(axis + "\n");
             int c = 0;
             while ((ss = brr.readLine()) != null) {
-                sbb.append(ss + "\t" + distance(center, dataSet.get(c)) + "\n");
+                sbb.append(ss+ distance(center, dataSet.get(c)) + "\n");
                 c++;
             }
             brr.close();
@@ -213,16 +241,15 @@ public class OptionController {
             //画一个散点图，代标签和一个雷达图
             CEcharts cEcharts = new CEcharts();
             Title title = new Title();
-            title.setText("默认的图表标题");
+            
             
             List<Axis> xAxis = new ArrayList<>();
             ValueAxis xAxisx = new ValueAxis();
-            xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
+          
             xAxis.add(xAxisx);
             // 设置y轴的数据
             List<Axis> yAxis = new ArrayList<>();
             ValueAxis yAxisy = new ValueAxis();
-            yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
             yAxis.add(yAxisy);
             // 数据区域
             List<Series> series = new ArrayList<>();
@@ -261,8 +288,82 @@ public class OptionController {
             Legend legend = new Legend();
             legend.setData(ca);
             GsonOption gsonOption = cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
-            responseBO.setData(gsonOption);
-            //TODO : 生成平行坐标图，保存的话就保存平行坐标图
+            
+            //生成平行坐标图
+            BufferedReader brrrr = new BufferedReader(new FileReader(new File("D:\\som\\" + pathName + "_" + k + ".txt")));
+            brrrr.readLine();
+            String[] dimms = brrrr.readLine().split("\t");
+            HashMap<String, List<Double>> smeans = new HashMap<>();
+            for (int i = 0; i < cluster.size(); i++) {
+                List li = new ArrayList<Object>();
+                for (int j = 0; j < dimms.length - 4; j++) {
+                    li.add(0.0);
+                }
+                smeans.put(cateName[i], li);
+            }
+            
+            
+            //坐标轴
+            List<ParallelAxis> parallelAxis = new ArrayList<>();
+            for (int i = 1; i < dimms.length - 3; i++) {
+                ParallelAxis parallelAxis1 = new ParallelAxis();
+               
+                parallelAxis1.setDim(i+1);
+                parallelAxis1.setName(dimms[i]);
+                parallelAxis.add(parallelAxis1);
+            }
+            //标签坐标轴
+            ParallelAxis parallelAxis11 = new ParallelAxis();
+            parallelAxis11.setDim(1);
+            parallelAxis11.setName(dimms[dimms.length - 1]);
+            parallelAxis11.setType(AxisType.category);
+            List<String> datap = new ArrayList<>();
+            for (int i = 0; i < cluster.size(); i++) {
+                datap.add(cateName[i]);
+            }
+            parallelAxis11.setData(datap);
+            parallelAxis.add(parallelAxis11);
+    
+            List<String> dataUserId = new ArrayList<>();
+            //数据
+            String stmp;
+            List<List<Object>> data = new ArrayList<>();
+            while ((stmp = brrrr.readLine()) != null) {
+                List<Object> dimss = new ArrayList<>();
+                String[] split1 = stmp.split("\t");
+                dataUserId.add(split1[0]);
+                dimss.add(split1[0]);
+                String flag = split1[split1.length - 1];
+                for (int i = 1; i < split1.length - 3; i++) {
+                    smeans.get(flag).set(i - 1, (smeans.get(flag).get(i - 1) + Double.parseDouble(split1[i])) / 2);
+                }
+                dimss.add(flag);
+                data.add(dimss);
+            }
+    
+            //id
+            ParallelAxis parallelAxis0 = new ParallelAxis();
+            parallelAxis0.setDim(0);
+            parallelAxis0.setName(dimms[0]);
+            parallelAxis0.setData(dataUserId);
+            parallelAxis0.setType(AxisType.category);
+            parallelAxis.add(parallelAxis0);
+            
+            
+            for (int i = 0; i < data.size(); i++) {
+                List<Double> doubles = smeans.get(data.get(i).get(1));
+                for (Double d : doubles) {
+                    data.get(i).add(d);
+                }
+            }
+            CEcharts cEchartP = new CEcharts();
+            Title titleP = new Title();
+            titleP.setText(titleText);
+            GsonOption gsonOptionP = cEchartP.setParallelOption(titleP, data, parallelAxis);
+            ArrayList<GsonOption> gsonOptions = new ArrayList<>();
+            gsonOptions.add(gsonOption);
+            gsonOptions.add(gsonOptionP);
+            responseBO.setData(gsonOptions);
             return responseBO;
         } catch (Exception e) {
             e.printStackTrace();

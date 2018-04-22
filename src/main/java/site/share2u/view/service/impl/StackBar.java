@@ -34,11 +34,12 @@ public class StackBar implements OptionFactory {
     
     @Override
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData) {
+        String[] split = tableName.split("@@");
         Map<String, Set<String>> dimensionEnum = OptionUtil.getEnum(dimensions, optionData);
         
         CEcharts cEcharts = new CEcharts();
         Title title = new Title();
-        title.setText("默认的图表标题");
+        title.setText(split[1]);
     
         // 如果维度为两个，添加第二个维度为图例
         Legend legend = new Legend();
@@ -52,7 +53,7 @@ public class StackBar implements OptionFactory {
         // 设置x轴的数据
         List<Axis> xAxis = new ArrayList<>();
         ValueAxis xAxisx = new ValueAxis();
-        xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
+        xAxisx.name(split[2]).splitLine().lineStyle().type(LineType.dashed);
         if (dimensions.get(0).getDataType() == 1 || dimensions.get(0).getDataType() == 7) {
             // 类目轴必须设置data
             xAxisx.setType(AxisType.category);
@@ -61,7 +62,7 @@ public class StackBar implements OptionFactory {
         // 设置y轴的数据
         List<Axis> yAxis = new ArrayList<>();
         ValueAxis yAxisy = new ValueAxis();
-        yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
+        yAxisy.name(split[3]).splitLine().lineStyle().type(LineType.dashed);
         yAxis.add(yAxisy);
     
         // 第0维作为x轴
@@ -79,8 +80,6 @@ public class StackBar implements OptionFactory {
             //系列名称
             String dimensionName = d1Iterator.next().toString();
             scatter.setName(dimensionName);
-        
-        
             Iterator<Object> d0Iterator = d0Enum.iterator();
             List<Object> data1 = new ArrayList<>();
             for (int j=0;j<d0Enum.size();j++){
@@ -100,12 +99,9 @@ public class StackBar implements OptionFactory {
                 }
                 count++;
             }
-        
             scatter.setData(data1);
             series.add(scatter);
-        
         }
-        
         return cEcharts.setScatterOption(title, legend, xAxis, yAxis, series);
         
     }

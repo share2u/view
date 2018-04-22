@@ -33,4 +33,14 @@ public class OptionDroolsImpl implements OptionService {
     public OptionView saveOption(OptionVO optionVO) {
         return null;
     }
+    
+    @Override
+    public void saveDims(List<Dim> dims) {
+    
+    }
+    
+    @Override
+    public Boolean deleOption(Integer optionId) {
+        return null;
+    }
 }

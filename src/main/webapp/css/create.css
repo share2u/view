@@ -244,6 +244,10 @@ ol, ul {
     position: absolute;
     top:290px;
 }
+.Kmeans{
+    position: absolute;
+    top:290px;
+}
 /*激活状态*/
 .chart-type a.active {
     background-color: #FFF;
@@ -271,7 +275,6 @@ ol, ul {
     height: 32px;
     background: url(//m1.bdp.cn/static/theme/light/svg-build/svg-sprite_27b1f3f.svg) -1056px -1049px no-repeat
 }
-/*计量图*/
  .chart-type a.disabled .C211 {
     width: 32px;
     height: 32px;
@@ -304,6 +307,16 @@ ol, ul {
     width: 32px;
     height: 32px;
     background: url(//m1.bdp.cn/static/theme/light/svg-build/svg-sprite_27b1f3f.svg) -288px -1049px no-repeat
+}
+.chart-type a.disabled .C221 {
+    width: 32px;
+    height: 32px;
+    background: url(../images/line.svg) no-repeat
+}
+.chart-type-icon.C221 {
+    width: 32px;
+    height: 32px;
+    background: url(../images/lineblue.svg) no-repeat
 }
  .chart-type a.disabled .C230 {
     width: 32px;
@@ -594,4 +607,15 @@ ol, ul {
     width: 32px;
     height: 32px;
     background: url(//m1.bdp.cn/static/theme/light/svg-build/svg-sprite_27b1f3f.svg) -945px -1009px no-repeat
+}
+.chart-type a.disabled .SOM {
+    width: 32px;
+    height: 32px;
+    background: url(../images/SOMsan.svg) no-repeat
+}
+
+.chart-type-icon.SOM {
+    width: 32px;
+    height: 32px;
+    background: url(../images/SOMsanblue.svg) no-repeat
 }

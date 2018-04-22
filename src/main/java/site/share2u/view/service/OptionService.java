@@ -37,6 +37,19 @@ public interface OptionService {
 	 * @return
 	 */
 	OptionView saveOption(OptionVO optionView);
+	
+	/**
+	 * 保存维度组合
+	 * @param dims
+	 */
+	void saveDims(List<Dim> dims);
+	
+	/**
+	 * 删除option
+	 * @param optionId
+	 * @return
+	 */
+	Boolean deleOption(Integer optionId);
 	/**
 	 * 获取option
 	 */

@@ -47,7 +47,7 @@ public class Context {
      * @return
      */
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures){
-        String sql = MakeSql.getSql(tableName, dimensions, measures);
+        String sql = MakeSql.getSql(tableName.split("@@")[0], dimensions, measures);
         List<PageData> optionData = optionDataService.getOptionData(sql);
         return  optionFactory.generOption(tableName,dimensions,measures,optionData);
     }

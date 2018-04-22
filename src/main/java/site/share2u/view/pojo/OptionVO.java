@@ -13,6 +13,15 @@ public class OptionVO {
     List<Measure> measures;
     Integer dashboardId;
     String option1;
+    String pathName;
+    
+    public String getPathName() {
+        return pathName;
+    }
+    
+    public void setPathName(String pathName) {
+        this.pathName = pathName;
+    }
     
     public Integer getId() {
         return id;

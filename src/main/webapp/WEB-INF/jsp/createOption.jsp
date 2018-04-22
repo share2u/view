@@ -101,7 +101,8 @@
                     <h4>标题</h4>
                 </div>
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="输入标题名称" aria-describedby="basic-addon1">
+                    <input id="titleText" type="text" class="form-control" placeholder="输入标题名称"
+                           aria-describedby="basic-addon1">
                 </div>
             </div>
             <div class="chart-type">
@@ -115,59 +116,66 @@
                     2、划过图标要提示
                     --%>
                     <ul>
-                        <li >
-                            <a >
+                        <li>
+                            <a>
                                 <i class="chart-type-icon C200"></i>
                             </a>
-                        </li><li >
-                            <a class="disabled">
+                        </li>
+                        <li>
+                            <a>
+                                <i class="chart-type-icon C221"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
                                 <i class="chart-type-icon C220"></i>
                             </a>
-                        </li><li >
-                            <a class="active">
-                                <i class="chart-type-icon C220"></i>
-                            </a>
-                        </li><li >
-                            <a class="disabled">
+                        </li>
+                        <li>
+                            <a>
                                 <i class="chart-type-icon C210"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="disabled">
+                            <a>
                                 <i class="chart-type-icon C211"></i>
                             </a>
                         </li>
-                        <li>
-                            <a class="disabled">
+                        <%--<li>
+                            <a>
                                 <i class="chart-type-icon C240"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="disabled">
+                            <a>
+                                <i class="chart-type-icon C241"></i>
+                            </a>
+                        </li>--%>
+                        <li>
+                            <a>
                                 <i class="chart-type-icon C280"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="disabled">
+                            <a>
                                 <i class="chart-type-icon C230"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="disabled">
+                            <a>
                                 <i class="chart-type-icon C250"></i>
                             </a>
                         </li>
                         <li>
-                            <a class="disabled">
-                                <i class="chart-type-icon C290"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="disabled">
+                            <a>
                                 <i class="chart-type-icon C330"></i>
                             </a>
                         </li>
-
+                        <li>
+                            <a>
+                                <i class="chart-type-icon SOM"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -176,11 +184,26 @@
                     <h4>坐标轴设置</h4>
                 </div>
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="X轴标签名称" aria-describedby="basic-addon1">
+                    <input type="text" id="xAxisName" class="form-control" placeholder="X轴标签名称"
+                           aria-describedby="basic-addon1">
                 </div>
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="X轴标签名称" aria-describedby="basic-addon1">
+                    <input type="text" id="yAxisName" class="form-control" placeholder="X轴标签名称"
+                           aria-describedby="basic-addon1">
                 </div>
+            </div>
+            <div class="Kmeans" hidden="hidden">
+                <div class="dims-head">
+                    <h4>聚类簇的个数</h4>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="k" class="form-control" placeholder="K值,默认为3"
+                           aria-describedby="basic-addon1">
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" id="beginK" class="btn btn-primary">聚类</button>
+                </div>
+                <input type="text" id="pathName" hidden="hidden">
             </div>
         </div>
         <div style="clear: both;"></div>

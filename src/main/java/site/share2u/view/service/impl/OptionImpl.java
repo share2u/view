@@ -10,6 +10,9 @@ import site.share2u.view.util.MakeSql;
 
 import java.util.*;
 
+/**
+ * @author Administrator
+ */
 @Service("optionService")
 public class OptionImpl implements OptionService {
 
@@ -119,8 +122,24 @@ public class OptionImpl implements OptionService {
 	
 	@Override
 	public OptionView saveOption(OptionVO optionVO) {
-		 optionMapper.saveOption(optionVO);
+		if("SOM".equals(optionVO.getSeriesType())){
+			optionMapper.saveSOMOption(optionVO);
+		}else{
+			optionMapper.saveOption(optionVO);
+		}
 		return getOption(optionVO.getId());
+	}
+	
+	@Override
+	public void saveDims(List<Dim> dims) {
+		optionMapper.saveDims(dims);
+	}
+	
+	
+	@Override
+	public Boolean deleOption(Integer optionId) {
+		optionMapper.deleOption(optionId);
+		return true;
 	}
 	
 	

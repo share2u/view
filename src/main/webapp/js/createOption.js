@@ -1,11 +1,10 @@
 /**
  * Created by Administrator on 2018/4/14.
  */
+var option = "";
+var jsonArrayDim = new Array();
+var jsonArrayMea = new Array();
 $(function () {
-
-    var option = "";
-    var jsonArrayDim = new Array();
-    var jsonArrayMea = new Array();
     $("#r1div,#r2div").attr({ondrop: "drop(event)", ondragover: "allowDrop(event)"});
     $("#dims").on('click', 'li', function () {
         $(this).attr({draggable: "true", ondragstart: "drag(event)"});
@@ -16,7 +15,9 @@ $(function () {
     $('#r1div,#r2div').on('click', '.remove', function (event) {
         event.cancelBubble = true;
         event.stopPropagation();
+
         $(this).parent().remove();
+        recommend();
 
     });
     /*
@@ -26,6 +27,10 @@ $(function () {
      * */
     $('#tableSelect').on('click', '.dropdown-menu li a', function () {
         $('#tableName').html($(this).text());
+
+        $('#r1div,#r2div,#chart_content').html("");
+
+
         $.ajax({
             url: "schema/tables/" + $(this).text(),
             dataType: "json",
@@ -50,34 +55,35 @@ $(function () {
     });
     $(".chart-type a[class != 'disabled']").bind('click', function () {
         $(".active").removeAttr("class");
-;        $(this).attr("class","active");
-        $('#chartType').val(($(this).attr("class").substr(16)));
+        ;
+        $(this).attr("class", "active");
+        var t = $(this).children("i").attr("class").substr(16);
+        if (t == 'C200' || t == 'C230' || t == "C330" || t == 'C250' || t == "SOM") {
+            $(".xyAxis").hide();
+        } else {
+            $(".xyAxis").show();
+        }
+        if (t == "SOM") {
+            $(".Kmeans").show();
+        } else {
+            $(".Kmeans").hide();
+        }
+        $('#chartType').val(t);
     });
+
 
     $("#createOption").bind('click', function () {
         /*
          * 需要的数据包括：1、工作表2、维度组合3、图表类型。。。。
          * */
         var tableName = $('#tableName').text();
-        var btnArray1 = $('#r1div').find('.btnValue');
-        var btnArray2 = $('#r2div').find('.btnValue');
         var chartType = $('#chartType').val();
-        jsonArrayDim = new Array();
-        btnArray1.each(function (i, o) {
-            var name = $(o).text();
-            var dim = {"name": name, "dataType": 1};
-            /*放入的时候应该是数字放到哪里都可以*/
-            jsonArrayDim.push(dim);
-        });
-        jsonArrayMea = new Array();
-        btnArray2.each(function (i, o) {
-            var name = $(o).text();
-            var dim = {"name": name, "dataType": 2, "method": "count"};
-            jsonArrayMea.push(dim);
-        });
+        var titleText = $("#titleText").val() || "标题";
+        var xAxisName = $('#xAxisName').val() || "x轴";
+        var yAxisName = $('#yAxisName').val() || "y轴";
         var jsonData = {
             "seriesType": chartType,
-            "tableName": tableName,
+            "tableName": tableName + "@@" + titleText + "@@" + xAxisName + "@@" + yAxisName,
             "dimensions": jsonArrayDim,
             "measures": jsonArrayMea
         };
@@ -91,21 +97,37 @@ $(function () {
             dataType: 'json',
             success: function (msg) {
                 option = msg.data;
-                console.log(option);
+                if (chartType != 'C200') {
+                    $("#titleText").val(option.title.text);
+                }
+                if (chartType == 'C200' || chartType == 'C230' || chartType == "C330" || chartType == 'C250') {
+
+                } else {
+                    $("#xAxisName").val(option.xAxis[0].name);
+                    $("#yAxisName").val(option.yAxis[0].name);
+                }
+                if (chartType == 'SOM') {
+                    var titletmp = option.title.text.split("@@")
+                    option.title.text = titletmp[0];
+                    console.log(titletmp);
+                    $('#pathName').val(titletmp[1]);
+                    $("#titleText").val(option.title.text);
+
+                }
                 if (chartType == "C200") {
                     option = JSON.parse(option);
                     var tableData = "";
-                    for(var i=0;i< option.length;i++){
-                        tableData +="<tr>"
-                        for(var j =0;j< option[i].length;j++){
-                            tableData +="<td>";
-                            tableData +=option[i][j];
-                            tableData +="</td>";
+                    for (var i = 0; i < option.length; i++) {
+                        tableData += "<tr>"
+                        for (var j = 0; j < option[i].length; j++) {
+                            tableData += "<td>";
+                            tableData += option[i][j];
+                            tableData += "</td>";
                         }
-                        tableData +="</tr>";
+                        tableData += "</tr>";
                     }
                     console.log(tableData);
-                    $('#chart_content').append("<table id='tableTmp' class='table  table-condensed'>"+tableData+"</table>");
+                    $('#chart_content').append("<table id='tableTmp' class='table  table-condensed'>" + tableData + "</table>");
 
                 } else {
                     var myChart = echarts.init(document.getElementById("chart_content"));
@@ -133,13 +155,19 @@ $(function () {
          * dim_oper  0---sum
          *
          * */
+        var chartType = $('#chartType').val();
+        if(chartType =="C200"){
+            alert("表格不支持保存");
+            return false;
+        }
         var jsonData = {
             "dashboardId": $("#dashboardId").val(),
             "tableName": $('#tableName').html(),
             "seriesType": $('#chartType').val(),
             "option1": JSON.stringify(option),
             "dimensions": jsonArrayDim,
-            "measures": jsonArrayMea
+            "measures": jsonArrayMea,
+            "pathName":$('#pathName').val()
         };
         $.ajax({
             url: 'chart/option/save',
@@ -155,7 +183,80 @@ $(function () {
             }
         });
     });
+    $('#beginK').bind('click', function () {
+        var k = $('#k').val() || 3;
+        var pathName = $('#pathName').val();
+        $.ajax({
+            url: 'chart/option/kmeanScatter',
+            type: 'POST',
+            data: {"k": k, "pathName": pathName,"titleText":$("#titleText").val() || "标题"},
+            dataType: 'json',
+            //生成一个平行坐标图，和聚类图
+            success: function (msg) {
+                var options = msg.data;
+                $('#chart_content').html("");
+                $("#chart_content").append("<div id='SOMScatter' style='width: 100%;height: 50%'></div>");
+                var myChart1 = echarts.init(document.getElementById("SOMScatter"));
+                myChart1.setOption(options[0]);
+                option = options[1];
+                console.log(option);
+                $("#chart_content").append("<div id='SOMFunner' style='width: 100%;height: 50%'></div>");
+                var myChart2 = echarts.init(document.getElementById("SOMFunner"));
+                myChart2.setOption(options[1]);
+            }
+        });
+    });
 });
+function recommend() {
+    $('#chart_content').html("");
+    var btnArray1 = $('#r1div').find('.btnValue');
+    var btnArray2 = $('#r2div').find('.btnValue');
+    jsonArrayDim = new Array();
+    btnArray1.each(function (i, o) {
+        var name = $(o).text();
+        var dim = {"name": name, "dataType": 1};
+        /*放入的时候应该是数字放到哪里都可以*/
+        jsonArrayDim.push(dim);
+    });
+    jsonArrayMea = new Array();
+    btnArray2.each(function (i, o) {
+        var name = $(o).text();
+        var dim = {"name": name, "dataType": 2, "method": $(this).parent().find('.dropdowntext').text()};
+        jsonArrayMea.push(dim);
+    });
+
+    $(".chart-type-icon").parent().attr("class", "disabled");
+    var d1 = jsonArrayDim.length;
+    var m1 = jsonArrayMea.length;
+    var chars = new Array();
+    if (d1 == 1 && m1 == 1) {
+        chars.push(".C221");
+        chars.push(".C230");
+        chars.push(".C330");
+        chars.push(".C240");
+        chars.push(".C210");
+
+    }
+    if (d1 == 0 && m1 == 2) {
+        chars.push(".C280");
+    }
+    if (d1 == 2 && m1 == 1) {
+        chars.push(".C211");
+        chars.push(".C241");
+        chars.push(".C220");
+
+    }
+    if (d1 == 1 && m1 == 2) {
+        chars.push(".C280");
+    }
+
+    if (d1 == 1 && m1 > 1) {
+        chars.push(".C250");
+        chars.push(".SOM");
+    }
+    chars.push(".C200");//表格
+    $(chars.join(",")).parent().removeAttr("class");
+};
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -184,9 +285,9 @@ function drop(ev) {
             }
         });
         if (flag) {
-            if($(ev.target).attr('id') == 'r1div'){
+            if ($(ev.target).attr('id') == 'r1div') {
                 $(ev.target).append('<div class="dropdown"><button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="btnValue">' + btnValue + '</span><span class="glyphicon glyphicon-remove remove" aria-hidden="true"></span></button></div>')
-            }else{
+            } else {
                 $(ev.target).append('<div class="dropdown"><button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>  <span class="btnValue">' + btnValue + '</span> （<span class="dropdowntext">count</span>）<span class="glyphicon glyphicon-remove remove" aria-hidden="true"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu2"><li><a >sum</a></li><li><a >max</a></li><li><a>count</a></li></ul></div>')
             }
 
@@ -195,8 +296,10 @@ function drop(ev) {
             console.log("位置重复");
         }
 
+        recommend();
     } else {
         console.log("请添加到对应位置");
     }
 
 }
+

@@ -29,9 +29,10 @@ public class PieOption implements OptionFactory {
     
     @Override
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData) {
+        String[] split = tableName.split("@@");
         CEcharts cEcharts = new CEcharts();
         Title title = new Title();
-        title.setText("默认的图表标题");
+        title.setText(split[1]);
         List<Series> series = new ArrayList<>();
         Series serie = new Pie();
         serie.setName(dimensions.get(0).getName());

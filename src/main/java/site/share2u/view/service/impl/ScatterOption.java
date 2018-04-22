@@ -45,13 +45,15 @@ public class ScatterOption implements OptionFactory {
      */
     @Override
     public GsonOption generOption(String tableName, List<Dimension> dimensions, List<Measure> measures, List<PageData> optionData) {
+        String[] split = tableName.split("@@");
         Map<String, Set<String>> dimensionEnum = OptionUtil.getEnum(dimensions, optionData);
         CEcharts cEcharts = new CEcharts();
         Title title = new Title();
-        title.setText("默认的图表标题");
+        title.setText(split[1]);
         Legend legend = new Legend();
-        Set<String> d1Enum = dimensionEnum.get(dimensions.get(0).getName());
+        Set<String> d1Enum = new HashSet<>();
         if (dimensions.size() == 1) {
+            d1Enum = dimensionEnum.get(dimensions.get(0).getName());
             // 如果维度为1个，添加维度为图例
             List<Data> legendData = new ArrayList<>();
             for (Object object : d1Enum) {
@@ -61,12 +63,12 @@ public class ScatterOption implements OptionFactory {
         }
         List<Axis> xAxis = new ArrayList<>();
         ValueAxis xAxisx = new ValueAxis();
-        xAxisx.name("x轴名称").splitLine().lineStyle().type(LineType.dashed);
+        xAxisx.name(split[2]).splitLine().lineStyle().type(LineType.dashed);
         xAxis.add(xAxisx);
         // 设置y轴的数据
         List<Axis> yAxis = new ArrayList<>();
         ValueAxis yAxisy = new ValueAxis();
-        yAxisy.name("y轴名称").splitLine().lineStyle().type(LineType.dashed);
+        yAxisy.name(split[3]).splitLine().lineStyle().type(LineType.dashed);
         yAxis.add(yAxisy);
         
         // 数据区域
@@ -82,13 +84,14 @@ public class ScatterOption implements OptionFactory {
                 for (int i = 0; i < optionData.size(); i++) {
                     // 单行数据
                     PageData pageData = optionData.get(i);
-                    if (optionData.get(i).get(dimensions.get(0).getName()).equals(dataName)) {
+                    if (String.valueOf(pageData.get(dimensions.get(0).getName())).equals(dataName)) {
                         ArrayList<Object> data1 = new ArrayList<Object>();
                         data1.add(pageData.get("agg_" + measures.get(0).getName()));
                         data1.add(pageData.get("agg_" + measures.get(1).getName()));
                         serieData.add(data1);
                     }
                 }
+                scatter.setData(serieData);
                 series.add(scatter);
             }
         } else {
