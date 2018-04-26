@@ -1,15 +1,15 @@
 package site.share2u.view.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import com.github.abel533.echarts.Grid;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
+import com.github.abel533.echarts.Toolbox;
 import com.github.abel533.echarts.axis.Axis;
 import com.github.abel533.echarts.axis.ParallelAxis;
 import com.github.abel533.echarts.code.AxisType;
+import com.github.abel533.echarts.feature.Feature;
 import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.series.Parallel;
 import com.github.abel533.echarts.series.Series;
@@ -73,6 +73,17 @@ public class CEcharts {
             option.setSeries(series);
             // 系列数据
         }
+		Toolbox toolbox = new Toolbox();
+		Map<String, Feature> feature = new HashMap<>();
+		Feature feature1 = new Feature();
+		feature1.setShow(Boolean.TRUE);
+		feature1.setReadOnly(Boolean.FALSE);
+		feature.put("dataView",feature1);
+		Feature feature2 = new Feature();
+		feature2.setShow(Boolean.TRUE);
+		feature.put("saveAsImage",feature2);
+		toolbox.setFeature(feature);
+		option.setToolbox(toolbox);
 		return option;
 	}
 
@@ -88,6 +99,18 @@ public class CEcharts {
 		//平行坐标轴
 		option.setTitle(title);
 		//标题
+		
+		Toolbox toolbox = new Toolbox();
+		Map<String, Feature> feature = new HashMap<>();
+		Feature feature1 = new Feature();
+		feature1.setShow(Boolean.TRUE);
+		feature1.setReadOnly(Boolean.FALSE);
+		feature.put("dataView",feature1);
+		Feature feature2 = new Feature();
+		feature2.setShow(Boolean.TRUE);
+		feature.put("saveAsImage",feature2);
+		toolbox.setFeature(feature);
+		option.setToolbox(toolbox);
 		return option;
 	}
 }
