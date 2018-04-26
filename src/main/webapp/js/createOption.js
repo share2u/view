@@ -11,12 +11,13 @@ $(function () {
     });
     $('#r1div,#r2div').on('click', '.dropdown-menu li a', function () {
         $(this).parent().parent().parent().find('button span[class="dropdowntext"]').html($(this).text());
+        recommend();
     });
     $('#r1div,#r2div').on('click', '.remove', function (event) {
         event.cancelBubble = true;
         event.stopPropagation();
 
-        $(this).parent().remove();
+        $(this).parent().parent().remove();
         recommend();
 
     });
@@ -27,10 +28,7 @@ $(function () {
      * */
     $('#tableSelect').on('click', '.dropdown-menu li a', function () {
         $('#tableName').html($(this).text());
-
         $('#r1div,#r2div,#chart_content').html("");
-
-
         $.ajax({
             url: "schema/tables/" + $(this).text(),
             dataType: "json",
@@ -42,8 +40,10 @@ $(function () {
                     for (var i = 0; i < dims.length; i++) {
                         var dataTypetmp = dims[i].dataType;
                         var iconClass = "bdp-icon ico-type-1";
-                        if (dataTypetmp == 'varchar' || dataTypetmp == 'timestamp') {
+                        if (dataTypetmp == 'varchar') {
                             iconClass = "bdp-icon ico-type-2";
+                        }else if(dataTypetmp == 'timestamp'){
+                            iconClass = "bdp-icon ico-type-3";
                         }
                         $('#dims').append('<li id="' + dims[i].columnName + '" class="list-group-item"> <i class="' + iconClass + '"></i> <span>' + dims[i].columnName + '</span> </li>');
                     }
@@ -54,8 +54,11 @@ $(function () {
 
     });
     $(".chart-type a[class != 'disabled']").bind('click', function () {
+        $('#chart_content').html("");
+        /*出现重新放置的图不显示*/
+        $('#chart_content').removeAttr("style");
+        $('#chart_content').removeAttr("_echarts_instance_");
         $(".active").removeAttr("class");
-        ;
         $(this).attr("class", "active");
         var t = $(this).children("i").attr("class").substr(16);
         if (t == 'C200' || t == 'C230' || t == "C330" || t == 'C250' || t == "SOM") {
@@ -209,6 +212,9 @@ $(function () {
 });
 function recommend() {
     $('#chart_content').html("");
+    /*出现重新放置的图不显示*/
+    $('#chart_content').removeAttr("style");
+    $('#chart_content').removeAttr("_echarts_instance_");
     var btnArray1 = $('#r1div').find('.btnValue');
     var btnArray2 = $('#r2div').find('.btnValue');
     jsonArrayDim = new Array();
@@ -224,38 +230,31 @@ function recommend() {
         var dim = {"name": name, "dataType": 2, "method": $(this).parent().find('.dropdowntext').text()};
         jsonArrayMea.push(dim);
     });
-
+    console.log(btnArray2);
+    console.log(jsonArrayMea);
     $(".chart-type-icon").parent().attr("class", "disabled");
-    var d1 = jsonArrayDim.length;
-    var m1 = jsonArrayMea.length;
-    var chars = new Array();
-    if (d1 == 1 && m1 == 1) {
-        chars.push(".C221");
-        chars.push(".C230");
-        chars.push(".C330");
-        chars.push(".C240");
-        chars.push(".C210");
+    if(jsonArrayDim.length>0 && jsonArrayMea.length>0){
+        var jsonData = {
+            "tableName":  $('#tableName').text(),
+            "dimensions": jsonArrayDim,
+            "measures": jsonArrayMea
+        };
 
-    }
-    if (d1 == 0 && m1 == 2) {
-        chars.push(".C280");
-    }
-    if (d1 == 2 && m1 == 1) {
-        chars.push(".C211");
-        chars.push(".C241");
-        chars.push(".C220");
-
-    }
-    if (d1 == 1 && m1 == 2) {
-        chars.push(".C280");
+        $.ajax({
+            url:"chart/recommend",
+            type: 'POST',
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(jsonData),
+            dataType: 'json',
+            success:function(msg){
+                console.log(msg.data);
+                if(msg.reasonCode =='200'){
+                    $(msg.data.join(",")).parent().removeAttr("class");
+                }
+            }
+        });
     }
 
-    if (d1 == 1 && m1 > 1) {
-        chars.push(".C250");
-        chars.push(".SOM");
-    }
-    chars.push(".C200");//表格
-    $(chars.join(",")).parent().removeAttr("class");
 };
 function allowDrop(ev) {
     ev.preventDefault();
@@ -269,13 +268,20 @@ function drag(ev) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("Text");
-    var typeClass = $('#' + data + '> i').attr("class");
+    //拖拽的div
+    var typeClass = $.trim($('#' + data + '> i').attr("class"));
     var btnValue = $("#" + data + "> span").text();
-    var typeflag = 'bdp-icon ico-type-2'
-    if ($(ev.target).attr('id') == 'r2div') {
-        typeflag = 'bdp-icon ico-type-1';
+    //目标的div
+    var targetDiv = $(ev.target).attr('id');
+    var placeFlag=false;
+    if (targetDiv == 'r2div' && typeClass == 'bdp-icon ico-type-1' ) {
+        placeFlag =true;
     }
-    if (typeflag != 'bdp-icon ico-type-1' || $.trim(typeClass) == typeflag) {
+    if( targetDiv == 'r1div'){
+        placeFlag=true;
+    }
+
+    if (placeFlag) {
         /*避免重复*/
         var btnArray = $("#" + $(ev.target).attr('id')).find('.btnValue');
         var flag = true;
@@ -285,17 +291,15 @@ function drop(ev) {
             }
         });
         if (flag) {
-            if ($(ev.target).attr('id') == 'r1div') {
+            if (targetDiv == 'r1div') {
                 $(ev.target).append('<div class="dropdown"><button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="btnValue">' + btnValue + '</span><span class="glyphicon glyphicon-remove remove" aria-hidden="true"></span></button></div>')
             } else {
                 $(ev.target).append('<div class="dropdown"><button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>  <span class="btnValue">' + btnValue + '</span> （<span class="dropdowntext">count</span>）<span class="glyphicon glyphicon-remove remove" aria-hidden="true"></span></button><ul class="dropdown-menu" aria-labelledby="dropdownMenu2"><li><a >sum</a></li><li><a >max</a></li><li><a>count</a></li></ul></div>')
             }
 
-
         } else {
             console.log("位置重复");
         }
-
         recommend();
     } else {
         console.log("请添加到对应位置");

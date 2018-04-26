@@ -17,13 +17,11 @@ public class SchemaTest extends BaseJunit4Test{
 	
 	@Test
 	public void getTablesTest(){
-		List<Table> tables = schemaService.getTables();
-		System.out.println(JSON.toJSONString(tables));
+	
 	}
 
 	@Test
 	public void getColumesTest(){
-		List<Column> columns =	schemaService.getColumns("product_spec_key");
-		System.out.printf(JSON.toJSONString(columns));
+	
 	}
 }

@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
  * @Author chenweimin
  */
 
-@RunWith(JMockit.class)
+//@RunWith(JMockit.class)
 public class SchemaMockTest {
 
     /**
@@ -38,7 +38,7 @@ public class SchemaMockTest {
         }};
     }
 */
-    @Test
+    /*@Test
     public void testMockUp() {
         //影响该类的所有的实例
         new MockUp<SimpleTool>() {
@@ -53,9 +53,9 @@ public class SchemaMockTest {
         System.out.println(new SimpleTool().fun1("xx"));
     }
 
-    /**
+    *//**
      * 对私有方法进行mock
-     */
+     *//*
     @Test
     public void testMockPrivate(){
         new MockUp<SimpleTool>(){
@@ -65,5 +65,5 @@ public class SchemaMockTest {
             }
         };
         System.out.println(new SimpleTool().fun4("private"));
-    }
+    }*/
 }

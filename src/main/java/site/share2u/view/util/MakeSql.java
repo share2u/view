@@ -25,7 +25,11 @@ public class MakeSql {
         sb.append("select ");
         if (dimensions != null && dimensions.size() > 0) {
             for (Dimension dimension : dimensions) {
-                sb.append(dimension.getName() + ",");
+                if(dimension.getName().equals("user_attenton_time") || dimension.getName().equals("update_time") || dimension.getName().equals("create_time") ){
+                    sb.append("DATE_FORMAT("+dimension.getName()+", '%Y-%m-%d') as "+dimension.getName()+ ",");
+                }else{
+                    sb.append(dimension.getName() + ",");
+                }
             }
             sb.deleteCharAt(sb.length() - 1);
         }
@@ -44,7 +48,11 @@ public class MakeSql {
         if (dimensions != null && dimensions.size() > 0) {
             sb.append(" group by ");
             for (Dimension dimension : dimensions) {
-                sb.append(dimension.getName() + ",");
+                if(dimension.getName().equals("user_attenton_time") || dimension.getName().equals("update_time") || dimension.getName().equals("create_time") ){
+                    sb.append("DATE_FORMAT("+dimension.getName()+", '%Y-%m-%d')"+ ",");
+                }else{
+                    sb.append(dimension.getName() + ",");
+                }
             }
             sb.deleteCharAt(sb.length() - 1);
         }

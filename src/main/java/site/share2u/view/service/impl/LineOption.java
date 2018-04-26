@@ -43,10 +43,10 @@ public class LineOption implements OptionFactory {
         List<Axis> xAxis = new ArrayList<>();
         ValueAxis xAxisx = new ValueAxis();
         xAxisx.name(split[2]).splitLine().lineStyle().type(LineType.dashed);
-        if (dimensions.get(0).getDataType() == 1 || dimensions.get(0).getDataType() == 7) {
+       // if (dimensions.get(0).getDataType() == 1 || dimensions.get(0).getDataType() == 7) {
             // 类目轴必须设置data
             xAxisx.setType(AxisType.category);
-        }
+        //}
         
         
         List<String> d0Enum = new ArrayList<>();

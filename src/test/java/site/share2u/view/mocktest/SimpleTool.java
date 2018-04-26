@@ -5,7 +5,7 @@ package site.share2u.view.mocktest;
  * @Author chenweimin
  */
 public class SimpleTool {
-    public String fun1(String str) {
+   /* public String fun1(String str) {
         return "real:fun1()+" + str;
     }
     private String fun2(String str) {
@@ -17,5 +17,5 @@ public class SimpleTool {
     }
     public String fun4(String str){
         return fun2(str);
-    }
+    }*/
 }

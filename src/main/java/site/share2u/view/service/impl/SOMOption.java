@@ -107,6 +107,7 @@ public class SOMOption implements OptionFactory {
                 data1.add(split[count + 1]);
                 serieData.add(data1);
             }
+            br.close();
             scatter.setData(serieData);
             series.add(scatter);
             return cEcharts.setScatterOption(title, null, xAxis, yAxis, series);

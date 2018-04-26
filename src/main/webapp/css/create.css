@@ -151,17 +151,23 @@ html, body{
     background-repeat: no-repeat;
     background-position: 0 0;
 }
-
+/*文本*/
 .ico-type-2 {
     width: 16px;
     height: 16px;
     background: url(https://m1.bdp.cn/static/theme/light/svg-build/svg-sprite_27b1f3f.svg) -1008px -1129px no-repeat;
 }
-
+/*数字*/
 .ico-type-1 {
     width: 16px;
     height: 16px;
     background: url(https://m1.bdp.cn/static/theme/light/svg-build/svg-sprite_27b1f3f.svg) -944px -1129px no-repeat;
+}
+/*时间*/
+.ico-type-3 {
+    width: 16px;
+    height: 16px;
+    background: url(//m1.bdp.cn/static/theme/light/svg-build/svg-sprite_27b1f3f.svg) -912px -1129px no-repeat;
 }
 
 *#r1div, #r2div {

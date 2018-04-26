@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Administrator on 2018/1/4.
+ *
+ * @author Administrator
+ * @date 2018/1/4
  */
 public class OptionDroolsImpl implements OptionService {
     @Override
@@ -18,7 +20,17 @@ public class OptionDroolsImpl implements OptionService {
     }
     
     @Override
-    public List<SeriesType> getTypes(String tableName,List<Dimension> types, List<Measure> measures) {
+    public List<OptionVO> getAllOptions() {
+        return null;
+    }
+    
+    @Override
+    public void updateOptionContent(OptionVO optionVO) {
+    
+    }
+    
+    @Override
+    public List<String> getTypes(String tableName,List<Dimension> types, List<Measure> measures) {
         return null;
     }
 

@@ -69,13 +69,19 @@ public class OptionController {
     }
     
     
-    //推荐的图表类型
-    @RequestMapping(value = "/recommemd")
-    public ResponseBO getTuiJianType(String tableName, List<Dimension> dimensions, List<Measure> measures) {
+    /**
+     * 推荐的图表类型
+     */
+    @RequestMapping(value = "/recommend",method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseBO getTuiJianType(@RequestBody OptionVO optionVO) {
         ResponseBO rb = new ResponseBO();
+        String tableName = optionVO.getTableName();
+        List<Dimension> dimensions = optionVO.getDimensions();
+        List<Measure> measures = optionVO.getMeasures();
         //TODO 从数据库中读取一些信息--可以从做缓存
-        List<SeriesType> types = optionService.getTypes(tableName, dimensions, measures);
-        rb.setData(JSON.toJSON(types));
+        List<String> types = optionService.getTypes(tableName, dimensions, measures);
+        rb.setData(types);
         return rb;
     }
     

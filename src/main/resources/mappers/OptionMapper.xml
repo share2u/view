@@ -13,7 +13,16 @@
         <association property="seriesTypeView" javaType="SeriesTypeView">
             <id column="chart_type" property="chartName"/>
         </association>
-
+    </resultMap>
+    <resultMap id="OptionVOResultMap" type="OptionVO">
+        <id column="id" property="id"/>
+        <result column="table_name" property="tableName"/>
+        <result column="chart_type" property="seriesType"/>
+		<result column="content" property="option1"/>
+        <collection property="dimensions" ofType="Dimension" column="id" select="selectDimName">
+        </collection>
+        <collection property="measures" ofType="Measure" column="id" select="selectMeaName">
+        </collection>
     </resultMap>
     <select id="getOptionsByDashboardId" parameterType="Integer" resultMap="OptionViewResultMap">
 		SELECT
@@ -53,7 +62,6 @@
 		VALUES
 		(#{dashboardId}, #{tableName}, #{option1}, #{seriesType}, 1,#{pathName})
 	</insert>
-
     <insert id="saveDims" parameterType="java.util.List">
         insert into view_dimension (option_id,dim_name,dim_oper)
         values
@@ -77,7 +85,6 @@
 			a.vaild = 1
 			AND a.id = #{optionId}
 	</select>
-
     <select id="getDims" resultType="PageData" parameterType="String">
 		SELECT
 			pathname,
@@ -89,5 +96,25 @@
 			a.chart_type = "SOM"
 		AND a.vaild = 1
 		AND a.table_name=#{tableName}
+	</select>
+    <select id="getAllOptions" resultMap="OptionVOResultMap">
+		SELECT
+			a.id,
+			a.table_name,
+			a.chart_type,
+			a.`content`
+		FROM
+			view_option a
+		WHERE
+			a.vaild = 1
+	</select>
+    <update id="updateOptionContent" parameterType="OptionVO">
+		update view_option set content=#{option1} where id=#{id}
+	</update>
+    <select id="selectDimName" parameterType="Integer" resultType="Dimension">
+		select dim_name name from view_dimension where option_id=#{id} and dim_oper ='0'
+	</select>
+    <select id="selectMeaName" parameterType="Integer" resultType="Measure">
+		select dim_name name,dim_oper method from view_dimension where option_id=#{id} and dim_oper !='0'
 	</select>
 </mapper>

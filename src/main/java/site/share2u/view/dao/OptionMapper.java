@@ -19,4 +19,6 @@ public interface OptionMapper {
 	OptionView getOption(Integer optionId);
 	
 	List<PageData> getDims(String tableName);
+	List<OptionVO> getAllOptions();
+	void updateOptionContent(OptionVO optionVO);
 }
